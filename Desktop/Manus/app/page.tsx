@@ -153,7 +153,7 @@ const MatrixRain = () => {
     const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{}[]|:;<>,.?=-"
     const matrixArray = matrix.split("")
 
-    const fontSize = 12
+    const fontSize = 36
     const columns = canvas.width / fontSize
 
     const drops: number[] = []
@@ -176,11 +176,11 @@ const MatrixRain = () => {
         if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
           drops[i] = 0
         }
-        drops[i]++
+        drops[i] += 0.2
       }
     }
 
-    const interval = setInterval(draw, 50)
+    const interval = setInterval(draw, 1000)
 
     return () => {
       clearInterval(interval)
