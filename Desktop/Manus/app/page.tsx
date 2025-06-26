@@ -150,9 +150,10 @@ const MatrixRain = () => {
     window.addEventListener('resize', setCanvasSize)
 
     // Matrix characters
-    const matrixArray = ["🔥", "⛽", "🌲", "🔫", "💰", "🙏", "💯"]
+    const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{}[]|:;<>,.?=-"
+    const matrixArray = matrix.split("")
 
-    const fontSize = 60
+    const fontSize = 12
     const columns = canvas.width / fontSize
 
     const drops: number[] = []
@@ -166,7 +167,7 @@ const MatrixRain = () => {
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
       ctx.fillStyle = '#00ff41' // Matrix green
-      ctx.font = `${fontSize}px system-ui, -apple-system, sans-serif`
+      ctx.font = `${fontSize}px monospace`
 
       for (let i = 0; i < drops.length; i++) {
         const text = matrixArray[Math.floor(Math.random() * matrixArray.length)]
@@ -264,7 +265,7 @@ export default function MenuPage() {
         
         <div className="space-y-0">
           {/* Indica Section */}
-          <div className="bg-black/20 backdrop-blur-sm px-8 py-6 border-t border-white/10">
+          <div className="px-8 py-6 border-t border-white/10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-apple-bold text-white tracking-tight">INDICA</h2>
               <div className="w-16 h-px bg-gradient-to-r from-purple-400 to-pink-400"></div>
@@ -304,7 +305,7 @@ export default function MenuPage() {
           </div>
 
           {/* Hybrid Section */}
-          <div className="bg-black/20 backdrop-blur-sm px-8 py-6 border-t border-white/10">
+          <div className="px-8 py-6 border-t border-white/10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-apple-bold text-white tracking-tight">HYBRID</h2>
               <div className="w-16 h-px bg-gradient-to-r from-emerald-400 to-teal-400"></div>
@@ -368,7 +369,7 @@ export default function MenuPage() {
           </div>
 
           {/* Sativa Section */}
-          <div className="bg-black/20 backdrop-blur-sm px-8 py-6 border-t border-white/10">
+          <div className="px-8 py-6 border-t border-white/10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-apple-bold text-white tracking-tight">SATIVA</h2>
               <div className="w-16 h-px bg-gradient-to-r from-orange-400 to-red-400"></div>
