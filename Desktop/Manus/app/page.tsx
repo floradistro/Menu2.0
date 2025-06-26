@@ -271,31 +271,31 @@ export default function MenuPage() {
               <div className="w-16 h-px bg-gradient-to-r from-purple-400 to-pink-400"></div>
             </div>
             <div className="space-y-0">
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/10">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/10">
                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">STRAIN</h3>
                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">TERPENES</h3>
                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">EFFECTS</h3>
                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">THCA</h3>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Purple Kush</h3>
                 <span className="text-lg font-thin text-purple-400 italic tracking-wide">Myrcene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Relaxing, Sleepy</span>
                 <span className="text-lg font-apple-bold text-purple-400 tracking-tight text-right">19%</span>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Granddaddy Purple</h3>
                 <span className="text-lg font-thin text-purple-400 italic tracking-wide">Myrcene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Relaxing, Euphoric</span>
                 <span className="text-lg font-apple-bold text-purple-400 tracking-tight text-right">23%</span>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Northern Lights</h3>
                 <span className="text-lg font-thin text-purple-400 italic tracking-wide">Myrcene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Relaxing, Happy</span>
                 <span className="text-lg font-apple-bold text-purple-400 tracking-tight text-right">18%</span>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Bubba Kush</h3>
                 <span className="text-lg font-thin text-green-400 italic tracking-wide">Caryophyllene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Relaxing, Sleepy</span>
@@ -311,55 +311,55 @@ export default function MenuPage() {
               <div className="w-16 h-px bg-gradient-to-r from-emerald-400 to-teal-400"></div>
             </div>
             <div className="space-y-0">
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/10">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/10">
                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">STRAIN</h3>
                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">TERPENES</h3>
                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">EFFECTS</h3>
                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">THCA</h3>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Crusher Candy</h3>
                 <span className="text-lg font-thin text-green-400 italic tracking-wide">Caryophyllene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Relaxing, Euphoric</span>
                 <span className="text-lg font-apple-bold text-emerald-400 tracking-tight text-right">24%</span>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Cheetah Piss</h3>
                 <span className="text-lg font-thin text-orange-400 italic tracking-wide">Limonene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Relaxing, Euphoric</span>
                 <span className="text-lg font-apple-bold text-emerald-400 tracking-tight text-right">22%</span>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Gelato Runtz</h3>
                 <span className="text-lg font-thin text-green-400 italic tracking-wide">Caryophyllene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Relaxing, Euphoric</span>
                 <span className="text-lg font-apple-bold text-emerald-400 tracking-tight text-right">25%</span>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Mint Cake</h3>
                 <span className="text-lg font-thin text-purple-400 italic tracking-wide">Myrcene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Relaxing, Euphoric</span>
                 <span className="text-lg font-apple-bold text-emerald-400 tracking-tight text-right">23%</span>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Fire Cookie</h3>
                 <span className="text-lg font-thin text-orange-400 italic tracking-wide">Limonene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Relaxing, Euphoric</span>
                 <span className="text-lg font-apple-bold text-emerald-400 tracking-tight text-right">26%</span>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Sherb Pie</h3>
                 <span className="text-lg font-thin text-blue-400 italic tracking-wide">Linalool</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Relaxing, Euphoric</span>
                 <span className="text-lg font-apple-bold text-emerald-400 tracking-tight text-right">21%</span>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Wild Runtz</h3>
                 <span className="text-lg font-thin text-orange-400 italic tracking-wide">Limonene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Relaxing, Euphoric</span>
                 <span className="text-lg font-apple-bold text-emerald-400 tracking-tight text-right">24%</span>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Whale Candy</h3>
                 <span className="text-lg font-thin text-green-400 italic tracking-wide">Caryophyllene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Relaxing, Euphoric</span>
@@ -375,31 +375,31 @@ export default function MenuPage() {
               <div className="w-16 h-px bg-gradient-to-r from-orange-400 to-red-400"></div>
             </div>
             <div className="space-y-0">
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/10">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/10">
                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">STRAIN</h3>
                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">TERPENES</h3>
                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">EFFECTS</h3>
                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">THCA</h3>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Green Crack</h3>
                 <span className="text-lg font-thin text-purple-400 italic tracking-wide">Myrcene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Energetic, Creative</span>
                 <span className="text-lg font-apple-bold text-orange-400 tracking-tight text-right">22%</span>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Jack Herer</h3>
                 <span className="text-lg font-thin text-yellow-400 italic tracking-wide">Terpinolene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Uplifting, Creative</span>
                 <span className="text-lg font-apple-bold text-orange-400 tracking-tight text-right">20%</span>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5 border-b border-white/5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Durban Poison</h3>
                 <span className="text-lg font-thin text-yellow-400 italic tracking-wide">Terpinolene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Energetic, Euphoric</span>
                 <span className="text-lg font-apple-bold text-orange-400 tracking-tight text-right">24%</span>
               </div>
-              <div className="grid grid-cols-4 gap-4 items-center py-0.5">
+              <div className="grid grid-cols-4 gap-2 items-center py-0.5">
                 <h3 className="text-lg font-apple-semibold text-white tracking-wide">Sour Diesel</h3>
                 <span className="text-lg font-thin text-green-400 italic tracking-wide">Caryophyllene</span>
                 <span className="text-lg font-thin text-white/70 italic tracking-wide">Energetic, Uplifting</span>
