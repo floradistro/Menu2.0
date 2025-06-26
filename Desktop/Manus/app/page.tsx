@@ -176,11 +176,11 @@ const MatrixRain = () => {
         if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
           drops[i] = 0
         }
-        drops[i] += 0.2
+        drops[i]++
       }
     }
 
-    const interval = setInterval(draw, 1000)
+    const interval = setInterval(draw, 500)
 
     return () => {
       clearInterval(interval)
