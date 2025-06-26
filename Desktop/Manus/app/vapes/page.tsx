@@ -265,6 +265,12 @@ const Navigation = () => {
         >
           EDIBLES
         </Link>
+        <Link 
+          href="/pricing"
+          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium"
+        >
+          PRICING
+        </Link>
       </div>
     </div>
   )
