@@ -30,8 +30,6 @@ body {
   font-family: var(--font-roboto);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Increase text size by 70% */
-  font-size: 170%;
   /* Cut line spacing to minimum */
   line-height: 0.6;
 }

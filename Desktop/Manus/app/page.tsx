@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
 interface Strain {
   name: string
@@ -137,8 +137,47 @@ const StrainItem = ({ strain }: { strain: Strain }) => (
 )
 
 export default function MenuPage() {
+  const [fontSize, setFontSize] = useState(170)
+
+  const increaseFontSize = () => {
+    console.log('Increasing font size from', fontSize)
+    setFontSize(prev => Math.min(prev + 10, 250))
+  }
+
+  const decreaseFontSize = () => {
+    console.log('Decreasing font size from', fontSize)
+    setFontSize(prev => Math.max(prev - 10, 120))
+  }
+
+  useEffect(() => {
+    // Apply font size to document root
+    document.documentElement.style.fontSize = `${fontSize}%`
+    console.log('Applied font size:', fontSize + '%')
+  }, [fontSize])
+
   return (
     <div className="h-screen w-screen flex flex-col bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
+      {/* Font Size Toggle */}
+      <div className="absolute top-4 right-4 z-[9999] flex items-center space-x-3 bg-black/40 backdrop-blur-xl rounded-full px-4 py-2 border border-white/20 pointer-events-auto">
+        <button
+          onClick={decreaseFontSize}
+          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white font-apple-bold text-sm transition-all duration-200 flex items-center justify-center cursor-pointer"
+          type="button"
+        >
+          A-
+        </button>
+        <span className="text-white/80 font-apple-medium text-sm min-w-[3rem] text-center">
+          {fontSize}%
+        </span>
+        <button
+          onClick={increaseFontSize}
+          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white font-apple-bold text-sm transition-all duration-200 flex items-center justify-center cursor-pointer"
+          type="button"
+        >
+          A+
+        </button>
+      </div>
+
       {/* Luxury Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Subtle luxury flares */}
