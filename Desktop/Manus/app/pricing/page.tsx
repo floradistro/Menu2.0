@@ -90,178 +90,268 @@ export default function PricingPage() {
       {/* Main Content */}
       <main className="flex-1 relative z-20 overflow-y-auto">
         {/* Luxury Title */}
-        <div className="text-center -mb-6 p-8">
-          <h1 className="font-don-graffiti text-white tracking-[0.3em] mb-2 drop-shadow-2xl" style={{ fontSize: '96px', textShadow: '0 8px 32px rgba(0, 0, 0, 0.8)' }}>PRICING</h1>
+        <div className="text-center mb-4 p-6">
+          <h1 className="font-don-graffiti text-white tracking-[0.3em] mb-2 drop-shadow-2xl" style={{ fontSize: '80px', textShadow: '0 8px 32px rgba(0, 0, 0, 0.8)' }}>PRICING</h1>
           <div className="w-24 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto"></div>
         </div>
         
-        <div className="space-y-4 px-8 pb-8">
-          {/* Flower Pricing */}
-          <div className="rounded-2xl p-6 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-4xl font-apple-bold text-emerald-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>FLOWER</h2>
-              <div className="w-20 h-px bg-gradient-to-r from-emerald-400 to-teal-400"></div>
+        <div className="max-w-7xl mx-auto px-6 pb-6">
+          {/* Top Row - Flower & Concentrates */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* Flower Pricing */}
+            <div className="rounded-xl p-6 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-5xl font-apple-bold text-emerald-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>FLOWER</h2>
+                <div className="w-20 h-px bg-gradient-to-r from-emerald-400 to-teal-400"></div>
+              </div>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/20">
+                    <th className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Weight</th>
+                    <th className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-white/10">
+                    <td className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>1g</td>
+                    <td className="text-3xl font-apple-bold text-green-400 drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$15</td>
+                  </tr>
+                  <tr className="border-b border-white/10">
+                    <td className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>3.5g</td>
+                    <td className="text-3xl font-apple-bold text-green-400 drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$40</td>
+                  </tr>
+                  <tr className="border-b border-white/10">
+                    <td className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>7g</td>
+                    <td className="text-3xl font-apple-bold text-green-400 drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$70</td>
+                  </tr>
+                  <tr className="border-b border-white/10">
+                    <td className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>14g</td>
+                    <td className="text-3xl font-apple-bold text-green-400 drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$110</td>
+                  </tr>
+                  <tr>
+                    <td className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>28g</td>
+                    <td className="text-3xl font-apple-bold text-green-400 drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$200</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <div className="grid grid-cols-5 gap-4 items-center text-center">
-              <div className="space-y-2">
-                <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>1g</h3>
-                <p className="text-2xl font-apple-bold text-emerald-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$15.00</p>
+
+            {/* Concentrates Pricing */}
+            <div className="rounded-xl p-6 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-5xl font-apple-bold text-purple-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>CONCENTRATES</h2>
+                <div className="w-20 h-px bg-gradient-to-r from-purple-400 to-pink-400"></div>
               </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>3.5g</h3>
-                <p className="text-2xl font-apple-bold text-emerald-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$40.00</p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>7g</h3>
-                <p className="text-2xl font-apple-bold text-emerald-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$70.00</p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>14g</h3>
-                <p className="text-2xl font-apple-bold text-emerald-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$110.00</p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>28g</h3>
-                <p className="text-2xl font-apple-bold text-emerald-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$200.00</p>
-              </div>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/20">
+                    <th className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Weight</th>
+                    <th className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-white/10">
+                    <td className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>1g</td>
+                    <td className="text-3xl font-apple-bold text-green-400 drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$35</td>
+                  </tr>
+                  <tr className="border-b border-white/10">
+                    <td className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>3.5g</td>
+                    <td className="text-3xl font-apple-bold text-green-400 drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$75</td>
+                  </tr>
+                  <tr className="border-b border-white/10">
+                    <td className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>7g</td>
+                    <td className="text-3xl font-apple-bold text-green-400 drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$125</td>
+                  </tr>
+                  <tr className="border-b border-white/10">
+                    <td className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>14g</td>
+                    <td className="text-3xl font-apple-bold text-green-400 drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$200</td>
+                  </tr>
+                  <tr>
+                    <td className="text-2xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>21g</td>
+                    <td className="text-3xl font-apple-bold text-green-400 drop-shadow-lg py-3 text-center" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$300</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
-          {/* Concentrates Pricing */}
-          <div className="rounded-2xl p-6 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-4xl font-apple-bold text-purple-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>CONCENTRATES</h2>
-              <div className="w-20 h-px bg-gradient-to-r from-purple-400 to-pink-400"></div>
-            </div>
-            <div className="grid grid-cols-5 gap-4 items-center text-center">
-              <div className="space-y-2">
-                <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>1g</h3>
-                <p className="text-2xl font-apple-bold text-purple-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$35.00</p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>3.5g</h3>
-                <p className="text-2xl font-apple-bold text-purple-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$75.00</p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>7g</h3>
-                <p className="text-2xl font-apple-bold text-purple-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$125.00</p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>14g</h3>
-                <p className="text-2xl font-apple-bold text-purple-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$200.00</p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>21g</h3>
-                <p className="text-2xl font-apple-bold text-purple-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$300.00</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Vapes & Edibles Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Middle Row - Vapes, Edibles, Pre-rolls */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             {/* Vapes Pricing */}
-            <div className="rounded-2xl p-6 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-3xl font-apple-bold text-orange-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>VAPES</h2>
+            <div className="rounded-xl p-6 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-4xl font-apple-bold text-orange-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>VAPES</h2>
                 <div className="w-16 h-px bg-gradient-to-r from-orange-400 to-red-400"></div>
               </div>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>1 Cart</h3>
-                  <p className="text-2xl font-apple-bold text-orange-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$35</p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>2 Carts</h3>
-                  <p className="text-2xl font-apple-bold text-orange-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$60</p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>3 Carts</h3>
-                  <p className="text-2xl font-apple-bold text-orange-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$75</p>
-                </div>
-              </div>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/20">
+                    <th className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Quantity</th>
+                    <th className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-white/10">
+                    <td className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>1 Cart</td>
+                    <td className="text-2xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$35</td>
+                  </tr>
+                  <tr className="border-b border-white/10">
+                    <td className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>2 Carts</td>
+                    <td className="text-2xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$60</td>
+                  </tr>
+                  <tr>
+                    <td className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>3 Carts</td>
+                    <td className="text-2xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$75</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
             {/* Edibles Pricing */}
-            <div className="rounded-2xl p-6 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-3xl font-apple-bold text-pink-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>EDIBLES</h2>
+            <div className="rounded-xl p-6 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-4xl font-apple-bold text-pink-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>EDIBLES</h2>
                 <div className="w-16 h-px bg-gradient-to-r from-pink-400 to-purple-400"></div>
               </div>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>1 Pack</h3>
-                  <p className="text-2xl font-apple-bold text-pink-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$30</p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>2 Packs</h3>
-                  <p className="text-2xl font-apple-bold text-pink-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$50</p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-apple-bold text-white/80 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>3 Packs</h3>
-                  <p className="text-2xl font-apple-bold text-pink-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$70</p>
-                </div>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/20">
+                    <th className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Quantity</th>
+                    <th className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-white/10">
+                    <td className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>1 Pack</td>
+                    <td className="text-2xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$30</td>
+                  </tr>
+                  <tr className="border-b border-white/10">
+                    <td className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>2 Packs</td>
+                    <td className="text-2xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$50</td>
+                  </tr>
+                  <tr>
+                    <td className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>3 Packs</td>
+                    <td className="text-2xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$70</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pre-rolls Pricing */}
+            <div className="rounded-xl p-6 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-4xl font-apple-bold text-yellow-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>PRE-ROLLS</h2>
+                <div className="w-16 h-px bg-gradient-to-r from-yellow-400 to-amber-400"></div>
               </div>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/20">
+                    <th className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Quantity</th>
+                    <th className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-white/10">
+                    <td className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>1 Roll</td>
+                    <td className="text-2xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$15</td>
+                  </tr>
+                  <tr className="border-b border-white/10">
+                    <td className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>3 Rolls</td>
+                    <td className="text-2xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$40</td>
+                  </tr>
+                  <tr>
+                    <td className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>5 Rolls</td>
+                    <td className="text-2xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$60</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
-          {/* Moonwater Pricing */}
-          <div className="rounded-2xl p-6 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-4xl font-apple-bold text-cyan-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>MOONWATER</h2>
-              <div className="w-20 h-px bg-gradient-to-r from-cyan-400 to-blue-400"></div>
-            </div>
-            <div className="space-y-6">
-              {/* 5mg Row */}
-              <div className="space-y-2">
-                <h3 className="text-2xl font-apple-bold text-cyan-400 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>5mg Strength</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                  <div className="space-y-1">
-                    <p className="text-lg font-apple-medium text-white/80 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Single</p>
-                    <p className="text-xl font-apple-bold text-cyan-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$5.00</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-lg font-apple-medium text-white/80 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>5-Pack</p>
-                    <p className="text-xl font-apple-bold text-cyan-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$11.99</p>
-                  </div>
-                </div>
+          {/* Bottom Row - Moonwater (Full Width) */}
+          <div className="mb-6">
+            <div className="rounded-xl p-6 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-5xl font-apple-bold text-cyan-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>MOONWATER</h2>
+                <div className="w-20 h-px bg-gradient-to-r from-cyan-400 to-blue-400"></div>
               </div>
-
-              {/* 10mg Row */}
-              <div className="space-y-2">
-                <h3 className="text-2xl font-apple-bold text-cyan-400 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>10mg Strength</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                  <div className="space-y-1">
-                    <p className="text-lg font-apple-medium text-white/80 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Single</p>
-                    <p className="text-xl font-apple-bold text-cyan-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$7.99</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-lg font-apple-medium text-white/80 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>10-Pack</p>
-                    <p className="text-xl font-apple-bold text-cyan-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$19.99</p>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* 5mg Strength */}
+                <div>
+                  <h3 className="text-3xl font-apple-bold text-cyan-400 tracking-wide drop-shadow-lg text-center mb-3" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>5mg</h3>
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-white/20">
+                        <th className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Type</th>
+                        <th className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-white/10">
+                        <td className="text-lg font-apple-medium text-white/90 drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Single</td>
+                        <td className="text-xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$5</td>
+                      </tr>
+                      <tr>
+                        <td className="text-lg font-apple-medium text-white/90 drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>4-Pack</td>
+                        <td className="text-xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$12</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-              </div>
 
-              {/* 30mg Row */}
-              <div className="space-y-2">
-                <h3 className="text-2xl font-apple-bold text-cyan-400 tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>30mg Strength</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                  <div className="space-y-1">
-                    <p className="text-lg font-apple-medium text-white/80 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Single</p>
-                    <p className="text-xl font-apple-bold text-cyan-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$8.99</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-lg font-apple-medium text-white/80 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>30-Pack</p>
-                    <p className="text-xl font-apple-bold text-cyan-400 drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$24.99</p>
-                  </div>
+                {/* 10mg Strength */}
+                <div>
+                  <h3 className="text-3xl font-apple-bold text-cyan-400 tracking-wide drop-shadow-lg text-center mb-3" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>10mg</h3>
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-white/20">
+                        <th className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Type</th>
+                        <th className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-white/10">
+                        <td className="text-lg font-apple-medium text-white/90 drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Single</td>
+                        <td className="text-xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$8</td>
+                      </tr>
+                      <tr>
+                        <td className="text-lg font-apple-medium text-white/90 drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>4-Pack</td>
+                        <td className="text-xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$20</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* 30mg Strength */}
+                <div>
+                  <h3 className="text-3xl font-apple-bold text-cyan-400 tracking-wide drop-shadow-lg text-center mb-3" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>30mg</h3>
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-white/20">
+                        <th className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Type</th>
+                        <th className="text-xl font-apple-bold text-white/90 tracking-wide drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-white/10">
+                        <td className="text-lg font-apple-medium text-white/90 drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>Single</td>
+                        <td className="text-xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$9</td>
+                      </tr>
+                      <tr>
+                        <td className="text-lg font-apple-medium text-white/90 drop-shadow-lg py-2" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>4-Pack</td>
+                        <td className="text-xl font-apple-bold text-green-400 drop-shadow-lg py-2 text-right" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>$25</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Note Section */}
-          <div className="rounded-2xl p-6 bg-white/5 backdrop-blur-md border border-white/10" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
-            <p className="text-lg font-apple-light text-white/70 italic text-center leading-relaxed drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>
-              All prices include applicable taxes. Bulk discounts available for larger quantities. 
-              Contact us for custom pricing on wholesale orders.
+          <div className="rounded-xl p-4 bg-white/5 backdrop-blur-md border border-white/10" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
+            <p className="text-xl font-apple-light text-white/80 italic text-center leading-relaxed drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>
+              All prices include taxes • Bulk discounts available • Contact for wholesale pricing
             </p>
           </div>
         </div>

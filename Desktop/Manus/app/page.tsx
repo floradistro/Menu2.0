@@ -613,6 +613,13 @@ export default function MenuPage() {
               </div>
             </div>
           </div>
+
+          {/* Pre-roll Disclaimer Section */}
+          <div className="rounded-2xl p-6 bg-white/5 backdrop-blur-md border border-white/10" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
+            <p className="text-lg font-apple-medium text-red-400 text-center leading-relaxed drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>
+              Pre Rolls are made to order using fresh flower of any strain!
+            </p>
+          </div>
         </div>
       </main>
 
