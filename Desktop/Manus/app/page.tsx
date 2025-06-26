@@ -180,7 +180,7 @@ const MatrixRain = () => {
       }
     }
 
-    const interval = setInterval(draw, 500)
+    const interval = setInterval(draw, 50)
 
     return () => {
       clearInterval(interval)
