@@ -256,16 +256,16 @@ export default function MenuPage() {
       </div>
       
       {/* Main Content */}
-      <main className="flex-1 p-8 relative z-20">
+      <main className="flex-1 relative z-20">
         {/* Luxury Title */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 p-8">
           <h1 className="text-6xl font-don-graffiti text-white tracking-[0.3em] mb-2">FLOWER</h1>
           <div className="w-24 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto"></div>
         </div>
         
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className="space-y-0">
           {/* Indica Section */}
-          <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-2xl">
+          <div className="bg-white/5 backdrop-blur-xl px-8 py-6 border-t border-white/10 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-apple-bold text-white tracking-tight">INDICA</h2>
               <div className="w-16 h-px bg-gradient-to-r from-purple-400 to-pink-400"></div>
@@ -305,7 +305,7 @@ export default function MenuPage() {
           </div>
 
           {/* Hybrid Section */}
-          <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-2xl">
+          <div className="bg-white/5 backdrop-blur-xl px-8 py-6 border-t border-white/10 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-apple-bold text-white tracking-tight">HYBRID</h2>
               <div className="w-16 h-px bg-gradient-to-r from-emerald-400 to-teal-400"></div>
@@ -369,7 +369,7 @@ export default function MenuPage() {
           </div>
 
           {/* Sativa Section */}
-          <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-2xl">
+          <div className="bg-white/5 backdrop-blur-xl px-8 py-6 border-t border-white/10 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-apple-bold text-white tracking-tight">SATIVA</h2>
               <div className="w-16 h-px bg-gradient-to-r from-orange-400 to-red-400"></div>
