@@ -30,6 +30,10 @@ body {
   font-family: var(--font-roboto);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Increase text size by 50% */
+  font-size: 150%;
+  /* Cut line spacing to minimum */
+  line-height: 0.6;
 }
 
 .font-apple {
