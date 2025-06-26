@@ -265,7 +265,7 @@ export default function MenuPage() {
         
         <div className="space-y-0">
           {/* Indica Section */}
-          <div className="bg-white/5 backdrop-blur-xl px-8 py-6 border-t border-white/10 shadow-2xl">
+          <div className="px-8 py-6 border-t border-white/10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-apple-bold text-white tracking-tight">INDICA</h2>
               <div className="w-16 h-px bg-gradient-to-r from-purple-400 to-pink-400"></div>
@@ -305,7 +305,7 @@ export default function MenuPage() {
           </div>
 
           {/* Hybrid Section */}
-          <div className="bg-white/5 backdrop-blur-xl px-8 py-6 border-t border-white/10 shadow-2xl">
+          <div className="px-8 py-6 border-t border-white/10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-apple-bold text-white tracking-tight">HYBRID</h2>
               <div className="w-16 h-px bg-gradient-to-r from-emerald-400 to-teal-400"></div>
@@ -369,7 +369,7 @@ export default function MenuPage() {
           </div>
 
           {/* Sativa Section */}
-          <div className="bg-white/5 backdrop-blur-xl px-8 py-6 border-t border-white/10 shadow-2xl">
+          <div className="px-8 py-6 border-t border-white/10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-apple-bold text-white tracking-tight">SATIVA</h2>
               <div className="w-16 h-px bg-gradient-to-r from-orange-400 to-red-400"></div>
