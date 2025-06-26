@@ -152,7 +152,7 @@ const MatrixRain = () => {
     // Matrix characters
     const matrixArray = ["🔥", "⛽", "🌲", "🔫", "💰", "🙏", "💯"]
 
-    const fontSize = 36
+    const fontSize = 60
     const columns = canvas.width / fontSize
 
     const drops: number[] = []
