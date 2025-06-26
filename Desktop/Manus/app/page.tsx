@@ -258,8 +258,8 @@ export default function MenuPage() {
       {/* Main Content */}
       <main className="flex-1 relative z-20">
         {/* Luxury Title */}
-        <div className="text-center mb-8 p-8">
-          <h1 className="text-6xl font-don-graffiti text-white tracking-[0.3em] mb-2">FLOWER</h1>
+        <div className="text-center -mb-6 p-8">
+          <h1 className="text-8xl font-don-graffiti text-white tracking-[0.3em] mb-2">FLOWER</h1>
           <div className="w-24 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto"></div>
         </div>
         
@@ -410,14 +410,6 @@ export default function MenuPage() {
         </div>
       </main>
 
-      {/* Luxury Footer */}
-      <footer className="bg-black/40 backdrop-blur-xl border-t border-white/10 p-4 flex-shrink-0">
-        <div className="text-center">
-          <p className="text-white/60 text-sm font-apple-light tracking-wide">
-            Menu updates every 15 minutes • For medical and recreational use • Must be 21+
-          </p>
-        </div>
-      </footer>
     </div>
   )
 } 
