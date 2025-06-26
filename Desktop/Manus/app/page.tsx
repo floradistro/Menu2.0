@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
 
 interface Strain {
   name: string
@@ -197,6 +198,49 @@ const MatrixRain = () => {
   )
 }
 
+// Navigation Component
+const Navigation = () => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <div className="absolute top-4 left-4 z-[9999]">
+      {/* Menu Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 text-white hover:bg-white/10 transition-all duration-200 flex items-center justify-center"
+      >
+        <div className="flex flex-col space-y-1">
+          <div className={`w-4 h-0.5 bg-white transition-all duration-200 ${isOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
+          <div className={`w-4 h-0.5 bg-white transition-all duration-200 ${isOpen ? 'opacity-0' : ''}`}></div>
+          <div className={`w-4 h-0.5 bg-white transition-all duration-200 ${isOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
+        </div>
+      </button>
+
+      {/* Navigation Menu */}
+      <div className={`absolute top-16 left-0 bg-black/60 backdrop-blur-xl rounded-xl border border-white/20 overflow-hidden transition-all duration-300 ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
+        <Link 
+          href="/"
+          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium text-emerald-400 border-b border-white/10"
+        >
+          FLOWER
+        </Link>
+        <Link 
+          href="/vapes"
+          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium border-b border-white/10"
+        >
+          VAPES
+        </Link>
+        <Link 
+          href="/edibles"
+          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium"
+        >
+          EDIBLES
+        </Link>
+      </div>
+    </div>
+  )
+}
+
 const StrainItem = ({ strain }: { strain: Strain }) => (
   <div className="flex justify-between items-center py-3 border-b border-white/10 last:border-b-0">
     <h3 className="text-lg font-apple-semibold text-white">{strain.name}</h3>
@@ -227,6 +271,9 @@ export default function MenuPage() {
     <div className="h-screen w-screen flex flex-col bg-black relative overflow-hidden">
       {/* Matrix Rain Background */}
       <MatrixRain />
+      
+      {/* Navigation */}
+      <Navigation />
       
       {/* Font Size Toggle */}
       <div className="absolute top-4 right-4 z-[9999] flex items-center space-x-3 bg-black/40 backdrop-blur-xl rounded-full px-4 py-2 border border-white/20 pointer-events-auto">
@@ -259,13 +306,13 @@ export default function MenuPage() {
       <main className="flex-1 relative z-20">
         {/* Luxury Title */}
         <div className="text-center -mb-6 p-8">
-          <h1 className="text-8xl font-don-graffiti text-white tracking-[0.3em] mb-2">FLOWER</h1>
+          <h1 className="font-don-graffiti text-white tracking-[0.3em] mb-2" style={{ fontSize: '96px' }}>FLOWER</h1>
           <div className="w-24 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto"></div>
         </div>
         
         <div className="space-y-0">
           {/* Indica Section */}
-          <div className="px-8 py-6 border-t border-white/10">
+          <div className="px-8 py-3 border-t border-white/10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-apple-bold text-white tracking-tight">INDICA</h2>
               <div className="w-16 h-px bg-gradient-to-r from-purple-400 to-pink-400"></div>
@@ -305,7 +352,7 @@ export default function MenuPage() {
           </div>
 
           {/* Hybrid Section */}
-          <div className="px-8 py-6 border-t border-white/10">
+          <div className="px-8 py-3 border-t border-white/10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-apple-bold text-white tracking-tight">HYBRID</h2>
               <div className="w-16 h-px bg-gradient-to-r from-emerald-400 to-teal-400"></div>
@@ -369,7 +416,7 @@ export default function MenuPage() {
           </div>
 
           {/* Sativa Section */}
-          <div className="px-8 py-6 border-t border-white/10">
+          <div className="px-8 py-3 border-t border-white/10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-apple-bold text-white tracking-tight">SATIVA</h2>
               <div className="w-16 h-px bg-gradient-to-r from-orange-400 to-red-400"></div>
