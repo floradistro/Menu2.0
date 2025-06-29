@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useCategoryData } from '../../lib/hooks/useMenuData'
 
 // Types
 interface PricingRule {
@@ -17,22 +16,6 @@ interface PricingRule {
   description?: string
   valid_from?: string
   valid_until?: string
-}
-
-interface Product {
-  id: string
-  name: string
-  category: string
-  price: string
-  in_stock: boolean
-}
-
-interface MenuSettings {
-  flipboard_messages?: {
-    deals?: string[]
-    bundles?: string[]
-    flash?: string[]
-  }
 }
 
 // Flipboard/Vestaboard Effects Component
@@ -247,80 +230,6 @@ const Navigation = () => {
         >
           ADMIN
         </Link>
-      </div>
-    </div>
-  )
-}
-
-// Pulsing Badge Component
-const PulsingBadge = ({ text, color = "amber" }: { text: string, color?: string }) => {
-  const colorClasses = {
-    amber: "bg-amber-500/20 text-amber-400 border-amber-400/30",
-    red: "bg-red-500/20 text-red-400 border-red-400/30",
-    emerald: "bg-emerald-500/20 text-emerald-400 border-emerald-400/30",
-    purple: "bg-purple-500/20 text-purple-400 border-purple-400/30"
-  }
-
-  return (
-    <div className={`inline-flex items-center px-3 py-1 rounded-full border ${colorClasses[color as keyof typeof colorClasses]} animate-pulse`}>
-      <div className={`w-2 h-2 rounded-full mr-2 ${color === 'amber' ? 'bg-amber-400' : color === 'red' ? 'bg-red-400' : color === 'emerald' ? 'bg-emerald-400' : 'bg-purple-400'} animate-ping`}></div>
-      <span className="text-sm font-apple-bold tracking-wide">{text}</span>
-    </div>
-  )
-}
-
-// Animated Price Component
-const AnimatedPrice = ({ originalPrice, salePrice }: { originalPrice: string, salePrice: string }) => {
-  return (
-    <div className="flex items-center space-x-3">
-      <span className="text-lg text-white/50 line-through font-apple-medium">{originalPrice}</span>
-      <span className="text-2xl font-apple-bold text-amber-400 animate-pulse">{salePrice}</span>
-    </div>
-  )
-}
-
-// Feature Card Component
-const FeatureCard = ({ 
-  title, 
-  description, 
-  originalPrice, 
-  salePrice, 
-  badge, 
-  badgeColor = "amber",
-  thc,
-  effects,
-  gradient = "from-amber-900/20 to-orange-900/20"
-}: {
-  title: string
-  description: string
-  originalPrice: string
-  salePrice: string
-  badge: string
-  badgeColor?: string
-  thc?: string
-  effects?: string[]
-  gradient?: string
-}) => {
-  return (
-    <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${gradient} backdrop-blur-md border border-white/20 p-6 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl`}>
-      <div className="absolute top-4 right-4">
-        <PulsingBadge text={badge} color={badgeColor} />
-      </div>
-      
-      <div className="space-y-4">
-        <h3 className="text-2xl font-apple-bold text-white tracking-tight drop-shadow-lg">{title}</h3>
-        
-        {thc && (
-          <div className="flex items-center space-x-4">
-            <span className="text-lg font-apple-semibold text-white/80">THCA: {thc}</span>
-          </div>
-        )}
-        
-        <p className="text-white/70 font-apple-medium leading-relaxed">{description}</p>
-        
-        <div className="pt-4 border-t border-white/10">
-          <AnimatedPrice originalPrice={originalPrice} salePrice={salePrice} />
-        </div>
       </div>
     </div>
   )
