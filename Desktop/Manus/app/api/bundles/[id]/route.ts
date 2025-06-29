@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '../../../../lib/supabase'
+import { getSupabaseAdmin, isSupabaseConfigured } from '../../../../lib/supabase'
 
 // DELETE /api/bundles/[id] - Delete a bundle
 export async function DELETE(
@@ -16,7 +16,7 @@ export async function DELETE(
       )
     }
 
-    const { error } = await supabaseAdmin
+    const { error } = await getSupabaseAdmin()
       .from('pricing_rules')
       .delete()
       .eq('id', id)
@@ -44,7 +44,7 @@ export async function PUT(
     const body = await request.json()
     const { ...updates } = body
 
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await getSupabaseAdmin()
       .from('pricing_rules')
       .update(updates)
       .eq('id', id)
@@ -59,6 +59,31 @@ export async function PUT(
     console.error('Error updating bundle:', error)
     return NextResponse.json(
       { error: 'Failed to update bundle' },
+      { status: 500 }
+    )
+  }
+}
+
+// GET /api/bundles/[id] - Get single bundle
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 503 }
+      )
+    }
+
+    const supabaseAdmin = getSupabaseAdmin()
+    
+    // ... existing code ...
+  } catch (error) {
+    console.error('Error getting bundle:', error)
+    return NextResponse.json(
+      { error: 'Failed to get bundle' },
       { status: 500 }
     )
   }

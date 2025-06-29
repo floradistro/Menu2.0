@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '../../../../lib/supabase'
+import { getSupabaseAdmin, isSupabaseConfigured } from '../../../../lib/supabase'
 
 // GET /api/products/[id] - Get single product
 export async function GET(
@@ -7,6 +7,15 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 503 }
+      )
+    }
+
+    const supabaseAdmin = getSupabaseAdmin()
+    
     const { data, error } = await supabaseAdmin
       .from('products')
       .select('*')
@@ -35,6 +44,14 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 503 }
+      )
+    }
+
+    const supabaseAdmin = getSupabaseAdmin()
     const body = await request.json()
     
     const { data, error } = await supabaseAdmin
@@ -62,6 +79,15 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 503 }
+      )
+    }
+
+    const supabaseAdmin = getSupabaseAdmin()
+    
     const { error } = await supabaseAdmin
       .from('products')
       .delete()

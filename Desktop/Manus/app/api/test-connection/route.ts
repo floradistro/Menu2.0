@@ -1,8 +1,19 @@
 import { NextResponse } from 'next/server'
-import { supabase, supabaseAdmin } from '../../../lib/supabase'
+import { supabase, getSupabaseAdmin, isSupabaseConfigured } from '../../../lib/supabase'
 
 export async function GET() {
   try {
+    // Check if Supabase is configured
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json({
+        success: false,
+        error: 'Database connection not configured',
+        details: 'Supabase environment variables are missing'
+      }, { status: 503 })
+    }
+
+    const supabaseAdmin = getSupabaseAdmin()
+
     // Test basic connection
     const { data: products, error: productsError } = await supabase
       .from('products')

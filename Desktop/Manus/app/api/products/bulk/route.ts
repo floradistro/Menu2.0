@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '../../../../lib/supabase'
+import { getSupabaseAdmin, isSupabaseConfigured } from '../../../../lib/supabase'
 
 // POST /api/products/bulk - Bulk operations on products
 export async function POST(request: NextRequest) {
   try {
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 503 }
+      )
+    }
+
+    const supabaseAdmin = getSupabaseAdmin()
+
     const { action, productIds, updates } = await request.json()
 
     switch (action) {
