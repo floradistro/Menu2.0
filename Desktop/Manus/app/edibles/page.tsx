@@ -2,14 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-
-interface Edible {
-  name: string
-  type: string
-  dosage: string
-  description: string
-  category: string
-}
+import { useCategoryData } from '../../lib/hooks/useMenuData'
 
 // Flipboard/Vestaboard Effects Component
 const FlipboardEffects = ({ messages, type }: { messages: string[], type: string }) => {
@@ -172,121 +165,6 @@ const FlipboardEffects = ({ messages, type }: { messages: string[], type: string
   )
 }
 
-const edibleData: Edible[] = [
-  {
-    name: "Thin Mints",
-    type: "Cookie",
-    dosage: "100mg",
-    description: "Classic minty chocolate cookie with smooth relaxing effects",
-    category: "cookies"
-  },
-  {
-    name: "Snicker Doodle",
-    type: "Cookie", 
-    dosage: "100mg",
-    description: "Cinnamon-sugar perfection with gentle uplifting effects",
-    category: "cookies"
-  },
-  {
-    name: "Peanut Butter",
-    type: "Cookie",
-    dosage: "100mg",
-    description: "Rich peanut butter flavor with well-rounded balanced effects",
-    category: "cookies"
-  },
-  {
-    name: "Chocolate Chip",
-    type: "Cookie",
-    dosage: "100mg",
-    description: "Classic comfort cookie with cheerful euphoric effects",
-    category: "cookies"
-  },
-  {
-    name: "Watermelon",
-    type: "Gummy",
-    dosage: "100mg",
-    description: "Juicy watermelon flavor with light social effects",
-    category: "gummies"
-  },
-  {
-    name: "Apple",
-    type: "Gummy",
-    dosage: "100mg",
-    description: "Crisp apple taste with energizing focus enhancement",
-    category: "gummies"
-  },
-  {
-    name: "Blueberry",
-    type: "Gummy",
-    dosage: "100mg",
-    description: "Sweet blueberry burst with gentle calming effects",
-    category: "gummies"
-  },
-  {
-    name: "Honey",
-    type: "Gummy",
-    dosage: "100mg",
-    description: "Natural honey sweetness with soothing balanced effects",
-    category: "gummies"
-  },
-  {
-    name: "Fruit Punch",
-    type: "Gummy",
-    dosage: "100mg",
-    description: "Tropical fruit medley with vibrant energetic effects",
-    category: "gummies"
-  },
-  {
-    name: "Grape",
-    type: "Gummy",
-    dosage: "100mg",
-    description: "Bold grape flavor with deeply relaxing effects",
-    category: "gummies"
-  },
-  {
-    name: "Green Tea",
-    type: "Gummy",
-    dosage: "100mg",
-    description: "Zen-like green tea with calming focused effects",
-    category: "gummies"
-  },
-  {
-    name: "Raspberry",
-    type: "Gummy",
-    dosage: "100mg",
-    description: "Tart raspberry tang with uplifting creative effects",
-    category: "gummies"
-  },
-  {
-    name: "Clementine Orange",
-    type: "Moonwater",
-    dosage: "5mg, 10mg, 30mg",
-    description: "Citrus burst with energizing uplifting effects",
-    category: "moonwater"
-  },
-  {
-    name: "Lemon Ginger",
-    type: "Moonwater",
-    dosage: "5mg, 10mg, 30mg",
-    description: "Zesty blend with calming focused effects",
-    category: "moonwater"
-  },
-  {
-    name: "Fizzy Punch",
-    type: "Moonwater",
-    dosage: "5mg, 10mg, 30mg",
-    description: "Tropical fizz with vibrant energetic effects",
-    category: "moonwater"
-  },
-  {
-    name: "Fizzy Lemonade",
-    type: "Moonwater",
-    dosage: "5mg, 10mg, 30mg",
-    description: "Sparkling citrus with balanced social effects",
-    category: "moonwater"
-  }
-]
-
 // Navigation Component
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -321,49 +199,28 @@ const Navigation = () => {
         </Link>
         <Link 
           href="/edibles"
-          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium text-pink-400"
+          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium text-pink-400 border-b border-white/10"
         >
           EDIBLES
         </Link>
         <Link 
+          href="/specials"
+          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium border-b border-white/10"
+        >
+          SPECIALS
+        </Link>
+        <Link 
           href="/pricing"
-          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium text-pink-400"
+          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium border-b border-white/10"
         >
           PRICING
         </Link>
-      </div>
-    </div>
-  )
-}
-
-const EdibleCard = ({ edible }: { edible: Edible }) => {
-  const getCategoryColor = (category: string) => {
-    switch (category.toLowerCase()) {
-      case 'cookies': return 'text-amber-400'
-      case 'gummies': return 'text-pink-400'
-      default: return 'text-white'
-    }
-  }
-
-  const getCategoryGradient = (category: string) => {
-    switch (category.toLowerCase()) {
-      case 'cookies': return 'from-amber-400 to-orange-400'
-      case 'gummies': return 'from-pink-400 to-purple-400'
-      default: return 'from-white to-gray-400'
-    }
-  }
-
-  return (
-    <div className="glass-dark rounded-2xl p-4 hover:bg-white/5 transition-all duration-300 border border-white/10">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-4xl font-apple-light text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{edible.name}</h3>
-        <span className="text-xl font-apple-light text-red-400 tracking-tight">{edible.dosage}</span>
-      </div>
-
-      <div className="border-t border-white/10 pt-3">
-        <p className="text-lg font-apple-light text-white/70 italic leading-snug">
-          {edible.description}
-        </p>
+        <Link 
+          href="/admin"
+          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium"
+        >
+          ADMIN
+        </Link>
       </div>
     </div>
   )
@@ -371,6 +228,7 @@ const EdibleCard = ({ edible }: { edible: Edible }) => {
 
 export default function EdiblesPage() {
   const [fontSize, setFontSize] = useState(170)
+  const { products, loading, error, refetch } = useCategoryData('edibles')
 
   const increaseFontSize = () => {
     setFontSize(prev => Math.min(prev + 10, 250))
@@ -383,6 +241,24 @@ export default function EdiblesPage() {
   useEffect(() => {
     document.documentElement.style.fontSize = `${fontSize}%`
   }, [fontSize])
+
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch()
+    }, 30000)
+
+    return () => clearInterval(interval)
+  }, [refetch])
+
+  // Group products by type
+  const getProductsByType = (type: string) => {
+    return products.filter(p => p.type.toLowerCase() === type.toLowerCase() && p.in_stock)
+  }
+
+  const cookieProducts = getProductsByType('cookie')
+  const gummyProducts = getProductsByType('gummy')
+  const moonwaterProducts = getProductsByType('moonwater')
 
   // Combined effects for each type - multi-word messages
   const allCookieEffects = [
@@ -406,6 +282,34 @@ export default function EdiblesPage() {
     "LIGHT SOCIAL BUZZ",
     "CRISP CLEAN EFFECTS"
   ]
+
+  if (loading) {
+    return (
+      <div className="h-screen w-screen flex flex-col bg-neutral-600 relative overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-2xl text-white">Loading edibles menu...</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="h-screen w-screen flex flex-col bg-neutral-600 relative overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-2xl text-red-400 mb-4">Error: {error}</div>
+            <button 
+              onClick={refetch}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-white"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="h-screen w-screen flex flex-col bg-neutral-600 relative overflow-hidden">
@@ -460,83 +364,94 @@ export default function EdiblesPage() {
           <div className="w-24 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto"></div>
         </div>
         
-        <div className="space-y-4 px-8">
+        <div className="space-y-2">
           {/* Cookies Section */}
-          <div className="rounded-2xl p-4 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-6">
-                <h2 className="text-3xl font-apple-bold text-amber-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>COOKIES</h2>
-                <FlipboardEffects messages={allCookieEffects} type="cookies" />
-              </div>
-              <div className="w-16 h-px bg-gradient-to-r from-amber-400 to-orange-400"></div>
-            </div>
-            <div className="space-y-0">
-              <div className="grid grid-cols-3 gap-2 items-center py-0.5 border-b border-white/10">
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">FLAVOR</h3>
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">EFFECTS</h3>
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">DOSAGE</h3>
-              </div>
-              {edibleData.filter(edible => edible.category === 'cookies').map((edible, index) => (
-                <div key={index} className="grid grid-cols-3 gap-2 items-center py-0.5 border-b border-white/5 last:border-b-0">
-                  <h3 className="text-lg font-apple-semibold text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{edible.name}</h3>
-                  <span className="text-lg font-thin text-white/70 italic tracking-wide">{edible.description.split(' ').slice(-2).join(' ')}</span>
-                  <span className="text-lg font-apple-bold text-amber-400 tracking-tight text-right">{edible.dosage}</span>
+          {cookieProducts.length > 0 && (
+            <div className="p-4 bg-white/5 backdrop-blur-md">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-6">
+                  <h2 className="text-3xl font-apple-bold text-amber-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>COOKIES</h2>
+                  <FlipboardEffects messages={allCookieEffects} type="cookies" />
                 </div>
-              ))}
+                <div className="w-16 h-px bg-gradient-to-r from-amber-400 to-orange-400"></div>
+              </div>
+              <div className="space-y-0">
+                <div className="grid grid-cols-2 gap-2 items-center py-1 bg-white/5">
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">FLAVOR</h3>
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">DOSAGE</h3>
+                </div>
+                {cookieProducts.map((product, index) => (
+                  <div key={product.id} className={`grid grid-cols-2 gap-2 items-center py-1 ${index % 2 === 1 ? 'bg-white/5' : ''}`}>
+                    <h3 className="text-lg font-apple-semibold text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{product.name}</h3>
+                    <span className="text-lg font-apple-bold text-amber-400 tracking-tight text-right">{product.dosage || 'N/A'}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Gummies Section */}
-          <div className="rounded-2xl p-4 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-6">
-                <h2 className="text-3xl font-apple-bold text-pink-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>GUMMIES</h2>
-                <FlipboardEffects messages={allGummyEffects} type="gummies" />
+          {gummyProducts.length > 0 && (
+            <div className={`p-4 bg-white/5 backdrop-blur-md ${(cookieProducts.length > 0) ? 'border-t border-white/10' : ''}`}>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-6">
+                  <h2 className="text-3xl font-apple-bold text-pink-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>GUMMIES</h2>
+                  <FlipboardEffects messages={allGummyEffects} type="gummies" />
+                </div>
+                <div className="w-16 h-px bg-gradient-to-r from-pink-400 to-purple-400"></div>
               </div>
-              <div className="w-16 h-px bg-gradient-to-r from-pink-400 to-purple-400"></div>
+              <div className="space-y-0">
+                <div className="grid grid-cols-2 gap-2 items-center py-1 bg-white/5">
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">FLAVOR</h3>
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">DOSAGE</h3>
+                </div>
+                {gummyProducts.map((product, index) => (
+                  <div key={product.id} className={`grid grid-cols-2 gap-2 items-center py-1 ${index % 2 === 1 ? 'bg-white/5' : ''}`}>
+                    <h3 className="text-lg font-apple-semibold text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{product.name}</h3>
+                    <span className="text-lg font-apple-bold text-pink-400 tracking-tight text-right">{product.dosage || 'N/A'}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-             <div className="space-y-0">
-               <div className="grid grid-cols-3 gap-2 items-center py-0.5 border-b border-white/10">
-                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">FLAVOR</h3>
-                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">EFFECTS</h3>
-                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">DOSAGE</h3>
-               </div>
-               {edibleData.filter(edible => edible.category === 'gummies').map((edible, index) => (
-                 <div key={index} className="grid grid-cols-3 gap-2 items-center py-0.5 border-b border-white/5 last:border-b-0">
-                   <h3 className="text-lg font-apple-semibold text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{edible.name}</h3>
-                   <span className="text-lg font-thin text-white/70 italic tracking-wide">{edible.description.split(' ').slice(-2).join(' ')}</span>
-                   <span className="text-lg font-apple-bold text-pink-400 tracking-tight text-right">{edible.dosage}</span>
-                 </div>
-               ))}
-             </div>
-           </div>
+          )}
 
           {/* Moonwater Section */}
-          <div className="rounded-2xl p-4 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-6">
-                <h2 className="text-3xl font-apple-bold text-cyan-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>MOONWATER</h2>
-                <FlipboardEffects messages={allMoonwaterEffects} type="moonwater" />
+          {moonwaterProducts.length > 0 && (
+            <div className={`p-4 bg-white/5 backdrop-blur-md ${(cookieProducts.length > 0 || gummyProducts.length > 0) ? 'border-t border-white/10' : ''}`}>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-6">
+                  <h2 className="text-3xl font-apple-bold text-cyan-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>MOONWATER</h2>
+                  <FlipboardEffects messages={allMoonwaterEffects} type="moonwater" />
+                </div>
+                <div className="w-16 h-px bg-gradient-to-r from-cyan-400 to-blue-400"></div>
               </div>
-              <div className="w-16 h-px bg-gradient-to-r from-cyan-400 to-blue-400"></div>
+              <div className="space-y-0">
+                <div className="grid grid-cols-2 gap-2 items-center py-1 bg-white/5">
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">FLAVOR</h3>
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">DOSAGE</h3>
+                </div>
+                {moonwaterProducts.map((product, index) => (
+                  <div key={product.id} className={`grid grid-cols-2 gap-2 items-center py-1 ${index % 2 === 1 ? 'bg-white/5' : ''}`}>
+                    <h3 className="text-lg font-apple-semibold text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{product.name}</h3>
+                    <span className="text-lg font-apple-bold text-cyan-400 tracking-tight text-right">{product.dosage || 'N/A'}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-             <div className="space-y-0">
-               <div className="grid grid-cols-3 gap-2 items-center py-0.5 border-b border-white/10">
-                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">FLAVOR</h3>
-                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">EFFECTS</h3>
-                 <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">DOSAGE</h3>
-               </div>
-               {edibleData.filter(edible => edible.category === 'moonwater').map((edible, index) => (
-                 <div key={index} className="grid grid-cols-3 gap-2 items-center py-0.5 border-b border-white/5 last:border-b-0">
-                   <h3 className="text-lg font-apple-semibold text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{edible.name}</h3>
-                   <span className="text-lg font-thin text-white/70 italic tracking-wide">{edible.description.split(' ').slice(-2).join(' ')}</span>
-                   <span className="text-lg font-apple-bold text-cyan-400 tracking-tight text-right">{edible.dosage}</span>
-                 </div>
-               ))}
-             </div>
-           </div>
-         </div>
+          )}
+
+          {/* No Products Message */}
+          {products.length === 0 && (
+            <div className="p-4 bg-white/5 backdrop-blur-md">
+              <div className="text-center text-white/60">
+                <h3 className="text-2xl font-apple-bold mb-2">No Edibles Available</h3>
+                <p className="text-lg">Check back soon for updates!</p>
+              </div>
+            </div>
+          )}
+        </div>
       </main>
+
     </div>
   )
 } 

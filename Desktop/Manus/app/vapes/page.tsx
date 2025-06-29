@@ -2,15 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-
-interface Vape {
-  name: string
-  type: string
-  thca: string
-  terpenes: string[]
-  effects: string[]
-  description: string
-}
+import { useCategoryData } from '../../lib/hooks/useMenuData'
 
 // Flipboard/Vestaboard Effects Component
 const FlipboardEffects = ({ messages, type }: { messages: string[], type: string }) => {
@@ -173,60 +165,6 @@ const FlipboardEffects = ({ messages, type }: { messages: string[], type: string
   )
 }
 
-const vapeData: Vape[] = [
-  {
-    name: "Jungle Cake",
-    type: "Hybrid",
-    thca: "89%",
-    terpenes: ["Myrcene", "Caryophyllene", "Limonene"],
-    effects: ["Relaxing", "Euphoric", "Creative"],
-    description: "Rich earthy flavors with tropical undertones and balanced hybrid effects"
-  },
-  {
-    name: "White Runtz",
-    type: "Hybrid",
-    thca: "89%",
-    terpenes: ["Limonene", "Linalool", "Caryophyllene"],
-    effects: ["Balanced", "Uplifting", "Creative"],
-    description: "Sweet candy-like flavor profile with perfectly balanced effects"
-  },
-  {
-    name: "Super Skunk",
-    type: "Indica",
-    thca: "89%",
-    terpenes: ["Myrcene", "Pinene", "Caryophyllene"],
-    effects: ["Relaxing", "Sleepy", "Hungry"],
-    description: "Classic skunk aroma with heavy-hitting indica effects"
-  },
-  {
-    name: "Gelato 33",
-    type: "Hybrid",
-    thca: "89%",
-    terpenes: ["Limonene", "Caryophyllene", "Linalool"],
-    effects: ["Balanced", "Creative", "Happy"],
-    description: "Dessert-like sweetness with well-rounded euphoric effects"
-  },
-  {
-    name: "Jet Fuel",
-    type: "Sativa",
-    thca: "89%",
-    terpenes: ["Terpinolene", "Myrcene", "Pinene"],
-    effects: ["Energetic", "Focus", "Uplifting"],
-    description: "Diesel-like aroma with high-energy cerebral stimulation"
-  },
-  {
-    name: "Lemon Soda",
-    type: "Sativa",
-    thca: "89%",
-    terpenes: ["Limonene", "Terpinolene", "Pinene"],
-    effects: ["Energetic", "Happy", "Creative"],
-    description: "Bright citrus flavor with effervescent uplifting effects"
-  }
-]
-
-// Matrix Rain Component (same as flower page)
-
-
 // Navigation Component
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -261,86 +199,28 @@ const Navigation = () => {
         </Link>
         <Link 
           href="/edibles"
-          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium"
+          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium border-b border-white/10"
         >
           EDIBLES
         </Link>
         <Link 
+          href="/specials"
+          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium border-b border-white/10"
+        >
+          SPECIALS
+        </Link>
+        <Link 
           href="/pricing"
-          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium"
+          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium border-b border-white/10"
         >
           PRICING
         </Link>
-      </div>
-    </div>
-  )
-}
-
-const VapeCard = ({ vape }: { vape: Vape }) => {
-  const getTypeColor = (type: string) => {
-    switch (type.toLowerCase()) {
-      case 'indica': return 'text-purple-400'
-      case 'sativa': return 'text-orange-400'
-      case 'hybrid': return 'text-emerald-400'
-      default: return 'text-white'
-    }
-  }
-
-  const getTypeGradient = (type: string) => {
-    switch (type.toLowerCase()) {
-      case 'indica': return 'from-purple-400 to-pink-400'
-      case 'sativa': return 'from-orange-400 to-red-400'
-      case 'hybrid': return 'from-emerald-400 to-teal-400'
-      default: return 'from-white to-gray-400'
-    }
-  }
-
-  return (
-    <div className="glass-dark rounded-2xl p-4 hover:bg-white/5 transition-all duration-300 border border-white/10">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-4">
-          <h3 className="text-4xl font-apple-light text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{vape.name}</h3>
-          <span className={`text-xl font-apple-light ${getTypeColor(vape.type)} tracking-tight`}>{vape.type.toUpperCase()}</span>
-        </div>
-        <span className="text-xl font-apple-light text-cyan-400 tracking-tight">THCA {vape.thca}</span>
-      </div>
-
-      <div className="mb-4">
-        <div className="flex items-center gap-4">
-          <h4 className="text-xl font-apple-light text-white/60 tracking-wide">TERPENES</h4>
-          <div className="flex flex-wrap gap-1">
-            {vape.terpenes.map((terpene, index) => (
-              <span 
-                key={index}
-                className="px-2 py-1 bg-white/10 rounded-full text-lg font-apple-light text-white/80 border border-white/20"
-              >
-                {terpene}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-4">
-        <div className="flex items-center gap-4">
-          <h4 className="text-xl font-apple-light text-white/60 tracking-wide">EFFECTS</h4>
-          <div className="flex flex-wrap gap-1">
-            {vape.effects.map((effect, index) => (
-              <span 
-                key={index}
-                className={`px-2 py-1 bg-white/10 rounded-full text-lg font-apple-light ${getTypeColor(vape.type)} border border-white/20`}
-              >
-                {effect}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t border-white/10 pt-3">
-        <p className="text-lg font-apple-light text-white/70 italic leading-snug">
-          {vape.description}
-        </p>
+        <Link 
+          href="/admin"
+          className="block px-6 py-4 text-white hover:bg-white/10 transition-all duration-200 font-apple-medium"
+        >
+          ADMIN
+        </Link>
       </div>
     </div>
   )
@@ -348,6 +228,7 @@ const VapeCard = ({ vape }: { vape: Vape }) => {
 
 export default function VapesPage() {
   const [fontSize, setFontSize] = useState(170)
+  const { products, loading, error, refetch } = useCategoryData('vapes')
 
   const increaseFontSize = () => {
     setFontSize(prev => Math.min(prev + 10, 250))
@@ -360,6 +241,24 @@ export default function VapesPage() {
   useEffect(() => {
     document.documentElement.style.fontSize = `${fontSize}%`
   }, [fontSize])
+
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch()
+    }, 30000)
+
+    return () => clearInterval(interval)
+  }, [refetch])
+
+  // Group products by type
+  const getProductsByType = (type: string) => {
+    return products.filter(p => p.type.toLowerCase() === type.toLowerCase() && p.in_stock)
+  }
+
+  const indicaProducts = getProductsByType('indica')
+  const hybridProducts = getProductsByType('hybrid')
+  const sativaProducts = getProductsByType('sativa')
 
   // Combined effects for each type - multi-word messages
   const allIndicaEffects = [
@@ -383,6 +282,34 @@ export default function VapesPage() {
     "SOCIAL OR SOLO READY",
     "BEST OF BOTH WORLDS"
   ]
+
+  if (loading) {
+    return (
+      <div className="h-screen w-screen flex flex-col bg-neutral-600 relative overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-2xl text-white">Loading vapes menu...</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="h-screen w-screen flex flex-col bg-neutral-600 relative overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-2xl text-red-400 mb-4">Error: {error}</div>
+            <button 
+              onClick={refetch}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-white"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="h-screen w-screen flex flex-col bg-neutral-600 relative overflow-hidden">
@@ -437,89 +364,106 @@ export default function VapesPage() {
           <div className="w-24 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto"></div>
         </div>
         
-        <div className="space-y-4 px-8">
+        <div className="space-y-2">
           {/* Indica Section */}
-          <div className="rounded-2xl p-4 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-6">
-                <h2 className="text-3xl font-apple-bold text-purple-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>INDICA</h2>
-                <FlipboardEffects messages={allIndicaEffects} type="indica" />
-              </div>
-              <div className="w-16 h-px bg-gradient-to-r from-purple-400 to-pink-400"></div>
-            </div>
-            <div className="space-y-0">
-              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/10">
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">STRAIN</h3>
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">TERPENES</h3>
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">EFFECTS</h3>
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">THCA</h3>
-              </div>
-              {vapeData.filter(vape => vape.type.toLowerCase() === 'indica').map((vape, index) => (
-                <div key={index} className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5 last:border-b-0">
-                  <h3 className="text-lg font-apple-semibold text-white tracking-wide">{vape.name}</h3>
-                  <span className="text-lg font-thin text-purple-400 italic tracking-wide">{vape.terpenes[0]}</span>
-                  <span className="text-lg font-thin text-white/70 italic tracking-wide">{vape.effects.slice(0, 2).join(', ')}</span>
-                  <span className="text-lg font-apple-bold text-purple-400 tracking-tight text-right">{vape.thca}</span>
+          {indicaProducts.length > 0 && (
+            <div className="p-4 bg-white/5 backdrop-blur-md">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-6">
+                  <h2 className="text-3xl font-apple-bold text-purple-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>INDICA</h2>
+                  <FlipboardEffects messages={allIndicaEffects} type="indica" />
                 </div>
-              ))}
+                <div className="w-16 h-px bg-gradient-to-r from-purple-400 to-pink-400"></div>
+              </div>
+              <div className="space-y-0">
+                <div className="grid grid-cols-3 gap-2 items-center py-1 bg-white/5">
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">STRAIN</h3>
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">TERPENES</h3>
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">THCA</h3>
+                </div>
+                {indicaProducts.map((product, index) => (
+                  <div key={product.id} className={`grid grid-cols-3 gap-2 items-center py-1 ${index % 2 === 1 ? 'bg-white/5' : ''}`}>
+                    <h3 className="text-lg font-apple-semibold text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{product.name}</h3>
+                    <span className="text-lg font-apple-semibold text-purple-400 italic tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>
+                      {product.terpenes && product.terpenes.length > 0 ? product.terpenes[0] : 'N/A'}
+                    </span>
+                    <span className="text-lg font-apple-bold text-purple-400 tracking-tight text-right drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{product.thca || 'N/A'}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Hybrid Section */}
-          <div className="rounded-2xl p-4 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-6">
-                <h2 className="text-3xl font-apple-bold text-emerald-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>HYBRID</h2>
-                <FlipboardEffects messages={allHybridEffects} type="hybrid" />
-              </div>
-              <div className="w-16 h-px bg-gradient-to-r from-emerald-400 to-teal-400"></div>
-            </div>
-            <div className="space-y-0">
-              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/10">
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">STRAIN</h3>
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">TERPENES</h3>
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">EFFECTS</h3>
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">THCA</h3>
-              </div>
-              {vapeData.filter(vape => vape.type.toLowerCase() === 'hybrid').map((vape, index) => (
-                <div key={index} className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5 last:border-b-0">
-                  <h3 className="text-lg font-apple-semibold text-white tracking-wide">{vape.name}</h3>
-                  <span className="text-lg font-thin text-emerald-400 italic tracking-wide">{vape.terpenes[0]}</span>
-                  <span className="text-lg font-thin text-white/70 italic tracking-wide">{vape.effects.slice(0, 2).join(', ')}</span>
-                  <span className="text-lg font-apple-bold text-emerald-400 tracking-tight text-right">{vape.thca}</span>
+          {hybridProducts.length > 0 && (
+            <div className={`p-4 bg-white/5 backdrop-blur-md ${(indicaProducts.length > 0) ? 'border-t border-white/10' : ''}`}>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-6">
+                  <h2 className="text-3xl font-apple-bold text-emerald-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>HYBRID</h2>
+                  <FlipboardEffects messages={allHybridEffects} type="hybrid" />
                 </div>
-              ))}
+                <div className="w-16 h-px bg-gradient-to-r from-emerald-400 to-teal-400"></div>
+              </div>
+              <div className="space-y-0">
+                <div className="grid grid-cols-3 gap-2 items-center py-1 bg-white/5">
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">STRAIN</h3>
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">TERPENES</h3>
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">THCA</h3>
+                </div>
+                {hybridProducts.map((product, index) => (
+                  <div key={product.id} className={`grid grid-cols-3 gap-2 items-center py-1 ${index % 2 === 1 ? 'bg-white/5' : ''}`}>
+                    <h3 className="text-lg font-apple-semibold text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{product.name}</h3>
+                    <span className="text-lg font-apple-semibold text-emerald-400 italic tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>
+                      {product.terpenes && product.terpenes.length > 0 ? product.terpenes[0] : 'N/A'}
+                    </span>
+                    <span className="text-lg font-apple-bold text-emerald-400 tracking-tight text-right drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{product.thca || 'N/A'}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Sativa Section */}
-          <div className="rounded-2xl p-4 bg-white/5 backdrop-blur-md" style={{ boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.5)' }}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-6">
-                <h2 className="text-3xl font-apple-bold text-orange-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>SATIVA</h2>
-                <FlipboardEffects messages={allSativaEffects} type="sativa" />
-              </div>
-              <div className="w-16 h-px bg-gradient-to-r from-orange-400 to-red-400"></div>
-            </div>
-            <div className="space-y-0">
-              <div className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/10">
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">STRAIN</h3>
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">TERPENES</h3>
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">EFFECTS</h3>
-                <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">THCA</h3>
-              </div>
-              {vapeData.filter(vape => vape.type.toLowerCase() === 'sativa').map((vape, index) => (
-                <div key={index} className="grid grid-cols-4 gap-2 items-center py-0.5 border-b border-white/5 last:border-b-0">
-                  <h3 className="text-lg font-apple-semibold text-white tracking-wide">{vape.name}</h3>
-                  <span className="text-lg font-thin text-orange-400 italic tracking-wide">{vape.terpenes[0]}</span>
-                  <span className="text-lg font-thin text-white/70 italic tracking-wide">{vape.effects.slice(0, 2).join(', ')}</span>
-                  <span className="text-lg font-apple-bold text-orange-400 tracking-tight text-right">{vape.thca}</span>
+          {sativaProducts.length > 0 && (
+            <div className={`p-4 bg-white/5 backdrop-blur-md ${(indicaProducts.length > 0 || hybridProducts.length > 0) ? 'border-t border-white/10' : ''}`}>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-6">
+                  <h2 className="text-3xl font-apple-bold text-orange-400 tracking-tight drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>SATIVA</h2>
+                  <FlipboardEffects messages={allSativaEffects} type="sativa" />
                 </div>
-              ))}
+                <div className="w-16 h-px bg-gradient-to-r from-orange-400 to-red-400"></div>
+              </div>
+              <div className="space-y-0">
+                <div className="grid grid-cols-3 gap-2 items-center py-1 bg-white/5">
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">STRAIN</h3>
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide">TERPENES</h3>
+                  <h3 className="text-sm font-apple-semibold text-white/80 tracking-wide text-right">THCA</h3>
+                </div>
+                {sativaProducts.map((product, index) => (
+                  <div key={product.id} className={`grid grid-cols-3 gap-2 items-center py-1 ${index % 2 === 1 ? 'bg-white/5' : ''}`}>
+                    <h3 className="text-lg font-apple-semibold text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{product.name}</h3>
+                    <span className="text-lg font-apple-semibold text-orange-400 italic tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>
+                      {product.terpenes && product.terpenes.length > 0 ? product.terpenes[0] : 'N/A'}
+                    </span>
+                    <span className="text-lg font-apple-bold text-orange-400 tracking-tight text-right drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.6)' }}>{product.thca || 'N/A'}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* No Products Message */}
+          {products.length === 0 && (
+            <div className="p-4 bg-white/5 backdrop-blur-md">
+              <div className="text-center text-white/60">
+                <h3 className="text-2xl font-apple-bold mb-2">No Vapes Available</h3>
+                <p className="text-lg">Check back soon for updates!</p>
+              </div>
+            </div>
+          )}
         </div>
       </main>
+
     </div>
   )
 } 
