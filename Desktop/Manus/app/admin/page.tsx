@@ -1,5 +1,6 @@
 'use client'
 
+// Admin interface - optimized for mobile and desktop
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Product } from '../../lib/supabase'
 import { PricingRule, BasePricing } from '../api/pricing/route'
