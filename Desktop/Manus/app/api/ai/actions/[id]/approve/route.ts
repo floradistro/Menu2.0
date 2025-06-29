@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '../../../../../../lib/supabase'
+import { getSupabaseAdmin, isSupabaseConfigured } from '../../../../../../lib/supabase'
 
 // POST /api/ai/actions/[id]/approve - Approve or reject AI action
 export async function POST(
@@ -7,6 +7,15 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Check if Supabase is configured
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 503 }
+      )
+    }
+
+    const supabaseAdmin = getSupabaseAdmin()
     const body = await request.json()
     const { approved, approved_by } = body
 

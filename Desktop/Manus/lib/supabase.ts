@@ -1,8 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+// Get environment variables with fallbacks for build time
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key'
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-key'
+
+// Check if we're in a build environment
+const isBuildTime = process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_SUPABASE_URL
 
 // Client-side Supabase client (for public operations)
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
@@ -14,6 +18,21 @@ export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
     persistSession: false
   }
 })
+
+// Helper function to check if Supabase is properly configured
+export const isSupabaseConfigured = () => {
+  return process.env.NEXT_PUBLIC_SUPABASE_URL && 
+         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY && 
+         process.env.SUPABASE_SERVICE_ROLE_KEY
+}
+
+// Wrapper function for admin operations that checks configuration
+export const getSupabaseAdmin = () => {
+  if (!isSupabaseConfigured() && !isBuildTime) {
+    throw new Error('Supabase environment variables are not configured')
+  }
+  return supabaseAdmin
+}
 
 // Database types
 export interface Product {

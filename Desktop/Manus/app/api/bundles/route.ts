@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '../../../lib/supabase'
+import { getSupabaseAdmin, isSupabaseConfigured } from '../../../lib/supabase'
 
 export interface Bundle {
   id?: string
@@ -19,9 +19,18 @@ export interface Bundle {
   updated_at?: string
 }
 
-// GET /api/bundles - Fetch all bundles
+// GET /api/bundles - Get all bundles
 export async function GET() {
   try {
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 503 }
+      )
+    }
+
+    const supabaseAdmin = getSupabaseAdmin()
+    
     const { data: bundles, error } = await supabaseAdmin
       .from('pricing_rules')
       .select('*')
@@ -61,6 +70,15 @@ export async function GET() {
 // POST /api/bundles - Create a new bundle
 export async function POST(request: NextRequest) {
   try {
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 503 }
+      )
+    }
+
+    const supabaseAdmin = getSupabaseAdmin()
+    
     const body = await request.json()
     const { 
       name, 

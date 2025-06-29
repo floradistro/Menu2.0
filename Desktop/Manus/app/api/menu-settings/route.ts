@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase, supabaseAdmin } from '../../../lib/supabase'
+import { supabase, getSupabaseAdmin, isSupabaseConfigured } from '../../../lib/supabase'
 
 // GET /api/menu-settings - Get all menu settings
 export async function GET() {
   try {
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 503 }
+      )
+    }
+
     const { data, error } = await supabase
       .from('menu_settings')
       .select('*')
@@ -26,9 +33,17 @@ export async function GET() {
   }
 }
 
-// PUT /api/menu-settings - Update menu settings
-export async function PUT(request: NextRequest) {
+// POST /api/menu-settings - Update menu settings
+export async function POST(request: NextRequest) {
   try {
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 503 }
+      )
+    }
+
+    const supabaseAdmin = getSupabaseAdmin()
     const body = await request.json()
     const { setting_key, setting_value } = body
 

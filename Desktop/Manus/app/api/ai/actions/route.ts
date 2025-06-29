@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '../../../../lib/supabase'
+import { getSupabaseAdmin, isSupabaseConfigured } from '../../../../lib/supabase'
 
 // GET /api/ai/actions - Get all AI actions (with optional filters)
 export async function GET(request: NextRequest) {
   try {
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 503 }
+      )
+    }
+
+    const supabaseAdmin = getSupabaseAdmin()
+
     const { searchParams } = new URL(request.url)
     const approved = searchParams.get('approved')
     const limit = searchParams.get('limit') || '50'
@@ -35,6 +44,14 @@ export async function GET(request: NextRequest) {
 // POST /api/ai/actions - Create new AI action
 export async function POST(request: NextRequest) {
   try {
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 503 }
+      )
+    }
+
+    const supabaseAdmin = getSupabaseAdmin()
     const body = await request.json()
     
     const { data, error } = await supabaseAdmin
