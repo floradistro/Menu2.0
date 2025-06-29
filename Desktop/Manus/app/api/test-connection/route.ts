@@ -3,12 +3,25 @@ import { supabase, getSupabaseAdmin, isSupabaseConfigured } from '../../../lib/s
 
 export async function GET() {
   try {
+    // Debug: Log environment variables (safely)
+    const envDebug = {
+      hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      supabaseUrlLength: process.env.NEXT_PUBLIC_SUPABASE_URL?.length || 0,
+      isConfigured: isSupabaseConfigured(),
+      nodeEnv: process.env.NODE_ENV
+    }
+
+    console.log('Environment debug:', envDebug)
+
     // Check if Supabase is configured
     if (!isSupabaseConfigured()) {
       return NextResponse.json({
         success: false,
         error: 'Database connection not configured',
-        details: 'Supabase environment variables are missing'
+        details: 'Supabase environment variables are missing',
+        debug: envDebug
       }, { status: 503 })
     }
 
