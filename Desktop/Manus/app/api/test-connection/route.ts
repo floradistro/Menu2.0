@@ -3,25 +3,31 @@ import { supabase, getSupabaseAdmin, isSupabaseConfigured } from '../../../lib/s
 
 export async function GET() {
   try {
-    // Debug: Log environment variables (safely)
+    // Comprehensive debug: Log all environment variable states
     const envDebug = {
       hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
       hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
       supabaseUrlLength: process.env.NEXT_PUBLIC_SUPABASE_URL?.length || 0,
+      anonKeyLength: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.length || 0,
+      serviceKeyLength: process.env.SUPABASE_SERVICE_ROLE_KEY?.length || 0,
+      supabaseUrlStart: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30) || 'undefined',
       isConfigured: isSupabaseConfigured(),
-      nodeEnv: process.env.NODE_ENV
+      nodeEnv: process.env.NODE_ENV,
+      allEnvKeys: Object.keys(process.env).filter(key => key.includes('SUPABASE')),
+      vercelEnv: process.env.VERCEL_ENV || 'not-set'
     }
 
-    console.log('Environment debug:', envDebug)
+    console.log('Comprehensive environment debug:', envDebug)
 
-    // Check if Supabase is configured
+    // Test direct Supabase connection with hardcoded values if env vars are missing
     if (!isSupabaseConfigured()) {
       return NextResponse.json({
         success: false,
         error: 'Database connection not configured',
         details: 'Supabase environment variables are missing',
-        debug: envDebug
+        debug: envDebug,
+        timestamp: new Date().toISOString()
       }, { status: 503 })
     }
 
