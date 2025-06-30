@@ -5,6 +5,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Product } from '../../lib/supabase'
 import { PricingRule, BasePricing } from '../api/pricing/route'
+import LayoutConfigPanel from './components/LayoutConfigPanel'
+import DisplayControlsPanel from './components/DisplayControlsPanel'
 
 interface MenuSettings {
   display_config?: {
@@ -25,8 +27,12 @@ export default function AdminPage() {
   const [basePricing, setBasePricing] = useState<BasePricing[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'flower' | 'vapes' | 'edibles' | 'pricing' | 'specials' | 'bundles' | 'settings'>('flower')
+  const [activeTab, setActiveTab] = useState<'flower' | 'vapes' | 'edibles' | 'pricing' | 'specials' | 'bundles' | 'display' | 'layout-flower' | 'layout-vapes' | 'layout-edibles'>('flower')
   const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set())
+  const [selectedPricingRules, setSelectedPricingRules] = useState<Set<string>>(new Set())
+  const [selectedBasePricing, setSelectedBasePricing] = useState<Set<string>>(new Set())
+  const [selectedSpecials, setSelectedSpecials] = useState<Set<string>>(new Set())
+  const [selectedBundles, setSelectedBundles] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [showSearchInput, setShowSearchInput] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
@@ -37,7 +43,7 @@ export default function AdminPage() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'a' && activeTab !== 'pricing' && activeTab !== 'settings') {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'a' && activeTab !== 'pricing') {
         e.preventDefault()
         selectAll()
       }
@@ -68,6 +74,8 @@ export default function AdminPage() {
       const productsData = await productsResponse.json()
       const settingsData = await settingsResponse.json()
       const pricingData = await pricingResponse.json()
+      
+      console.log('Fetched settings data:', settingsData)
       
       setProducts(productsData.products || [])
       setSettings(settingsData.settings || {})
@@ -205,7 +213,7 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="h-screen w-screen flex flex-col bg-neutral-600 relative overflow-hidden">
+      <div className="h-screen w-screen flex flex-col bg-neutral-600 relative overflow-hidden" style={{ fontSize: '12.8px' }}>
         {/* Light Grid Background */}
         <div 
           className="absolute inset-0 pointer-events-none z-0"
@@ -230,7 +238,7 @@ export default function AdminPage() {
 
   if (error) {
     return (
-      <div className="h-screen w-screen flex flex-col bg-neutral-600 relative overflow-hidden">
+      <div className="h-screen w-screen flex flex-col bg-neutral-600 relative overflow-hidden" style={{ fontSize: '12.8px' }}>
         {/* Light Grid Background */}
         <div 
           className="absolute inset-0 pointer-events-none z-0"
@@ -259,7 +267,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-neutral-600 relative overflow-hidden">
+    <div className="h-screen w-screen flex flex-col bg-neutral-600 relative overflow-hidden" style={{ fontSize: '12.8px' }}>
       {/* Light Grid Background */}
       <div 
         className="absolute inset-0 pointer-events-none z-0"
@@ -279,7 +287,7 @@ export default function AdminPage() {
       
       {/* Combined Header & Navigation */}
       <header className="bg-black/40 backdrop-blur-xl border-b border-white/20 sticky top-0 z-40">
-        <div className="container mx-auto px-4 sm:px-6 py-4">
+        <div className="w-full px-6 py-4">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
             <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-8">
               <h1 className="font-don-graffiti text-white tracking-[0.2em] drop-shadow-2xl text-xl sm:text-2xl">
@@ -294,13 +302,21 @@ export default function AdminPage() {
                   { key: 'edibles', label: 'EDIBLES', count: getProductsByCategory('edibles').length },
                   { key: 'pricing', label: 'PRICING', count: pricingRules.length },
                   { key: 'specials', label: 'SPECIALS', count: null },
-                  { key: 'bundles', label: 'BUNDLES', count: null }
+                  { key: 'bundles', label: 'BUNDLES', count: null },
+                  { key: 'display', label: 'DISPLAY', count: null },
+                  { key: 'layout-flower', label: 'LAYOUT: FLOWER', count: null },
+                  { key: 'layout-vapes', label: 'LAYOUT: VAPES', count: null },
+                  { key: 'layout-edibles', label: 'LAYOUT: EDIBLES', count: null }
                 ].map((tab) => (
                   <button
                     key={tab.key}
                     onClick={() => {
                       setActiveTab(tab.key as any)
                       setSelectedProducts(new Set())
+                      setSelectedPricingRules(new Set())
+                      setSelectedBasePricing(new Set())
+                      setSelectedSpecials(new Set())
+                      setSelectedBundles(new Set())
                     }}
                     className={`font-apple-medium transition-all duration-200 flex items-center space-x-1 hover:text-white text-xs sm:text-sm whitespace-nowrap ${
                       activeTab === tab.key
@@ -352,25 +368,13 @@ export default function AdminPage() {
                   </svg>
                 </button>
               )}
-              <button
-                onClick={() => setActiveTab('settings')}
-                className={`p-2 transition-all duration-200 ${
-                  activeTab === 'settings'
-                    ? 'text-emerald-400'
-                    : 'text-white/70 hover:text-white'
-                }`}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </button>
-              {selectedProducts.size > 0 && (
+
+              {(selectedProducts.size > 0 || selectedPricingRules.size > 0 || selectedBasePricing.size > 0 || selectedSpecials.size > 0 || selectedBundles.size > 0) && (
                 <button
                   onClick={() => setShowBulkActions(!showBulkActions)}
                   className="px-3 py-2 bg-emerald-600/80 hover:bg-emerald-600 backdrop-blur-xl rounded-lg text-sm transition-all duration-200 text-white font-apple-medium border border-emerald-400/30"
                 >
-                  Bulk Actions ({selectedProducts.size})
+                  Bulk Actions ({selectedProducts.size + selectedPricingRules.size + selectedBasePricing.size + selectedSpecials.size + selectedBundles.size})
                 </button>
               )}
             </div>
@@ -379,41 +383,55 @@ export default function AdminPage() {
       </header>
 
       {/* Bulk Actions Bar */}
-      {showBulkActions && selectedProducts.size > 0 && (
+      {showBulkActions && (selectedProducts.size > 0 || selectedPricingRules.size > 0 || selectedBasePricing.size > 0 || selectedSpecials.size > 0 || selectedBundles.size > 0) && (
         <div className="bg-emerald-600/90 backdrop-blur-xl text-white px-6 py-4 sticky top-16 z-20 border-b border-emerald-400/30">
-          <div className="container mx-auto flex items-center justify-between">
+          <div className="w-full flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <span className="font-apple-semibold">{selectedProducts.size} items selected</span>
+              <span className="font-apple-semibold">
+                {selectedProducts.size + selectedPricingRules.size + selectedBasePricing.size + selectedSpecials.size + selectedBundles.size} items selected
+              </span>
               <button
-                onClick={() => setSelectedProducts(new Set())}
+                onClick={() => {
+                  setSelectedProducts(new Set())
+                  setSelectedPricingRules(new Set())
+                  setSelectedBasePricing(new Set())
+                  setSelectedSpecials(new Set())
+                  setSelectedBundles(new Set())
+                }}
                 className="text-sm hover:underline font-apple-medium"
               >
                 Clear selection
               </button>
             </div>
             <div className="flex items-center space-x-3">
-              <button
-                onClick={() => handleBulkAction('update', { updates: { in_stock: true } })}
-                className="px-4 py-2 bg-green-500/80 hover:bg-green-500 backdrop-blur-xl rounded-xl transition-all duration-200 font-apple-medium border border-green-400/30"
-              >
-                Mark In Stock
-              </button>
-              <button
-                onClick={() => handleBulkAction('update', { updates: { in_stock: false } })}
-                className="px-4 py-2 bg-orange-500/80 hover:bg-orange-500 backdrop-blur-xl rounded-xl transition-all duration-200 font-apple-medium border border-orange-400/30"
-              >
-                Mark Out of Stock
-              </button>
-              <button
-                onClick={() => handleBulkAction('clone')}
-                className="px-4 py-2 bg-purple-500/80 hover:bg-purple-500 backdrop-blur-xl rounded-xl transition-all duration-200 font-apple-medium border border-purple-400/30"
-              >
-                Clone
-              </button>
+              {selectedProducts.size > 0 && (
+                <>
+                  <button
+                    onClick={() => handleBulkAction('update', { updates: { in_stock: true } })}
+                    className="px-4 py-2 bg-green-500/80 hover:bg-green-500 backdrop-blur-xl rounded-xl transition-all duration-200 font-apple-medium border border-green-400/30"
+                  >
+                    Mark In Stock
+                  </button>
+                  <button
+                    onClick={() => handleBulkAction('update', { updates: { in_stock: false } })}
+                    className="px-4 py-2 bg-orange-500/80 hover:bg-orange-500 backdrop-blur-xl rounded-xl transition-all duration-200 font-apple-medium border border-orange-400/30"
+                  >
+                    Mark Out of Stock
+                  </button>
+                  <button
+                    onClick={() => handleBulkAction('clone')}
+                    className="px-4 py-2 bg-purple-500/80 hover:bg-purple-500 backdrop-blur-xl rounded-xl transition-all duration-200 font-apple-medium border border-purple-400/30"
+                  >
+                    Clone
+                  </button>
+                </>
+              )}
               <button
                 onClick={() => {
-                  if (confirm(`Delete ${selectedProducts.size} products?`)) {
-                    handleBulkAction('delete')
+                  const totalSelected = selectedProducts.size + selectedPricingRules.size + selectedBasePricing.size + selectedSpecials.size + selectedBundles.size
+                  if (confirm(`Delete ${totalSelected} items?`)) {
+                    if (selectedProducts.size > 0) handleBulkAction('delete')
+                    // Add bulk delete handlers for other types here
                   }
                 }}
                 className="px-4 py-2 bg-red-500/80 hover:bg-red-500 backdrop-blur-xl rounded-xl transition-all duration-200 font-apple-medium border border-red-400/30"
@@ -427,7 +445,7 @@ export default function AdminPage() {
 
       {/* Main Content */}
       <main className="flex-1 relative z-20 overflow-y-auto">
-        <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-8">
+        <div className="w-full px-6 py-8">
           {(activeTab === 'flower' || activeTab === 'vapes' || activeTab === 'edibles') && (
             <ProductManagement
               category={activeTab}
@@ -455,6 +473,32 @@ export default function AdminPage() {
               onRefresh={fetchData}
               saving={saving}
               setSaving={setSaving}
+              selectedPricingRules={selectedPricingRules}
+              selectedBasePricing={selectedBasePricing}
+              onTogglePricingRuleSelection={(id: string) => {
+                const newSelection = new Set(selectedPricingRules)
+                if (newSelection.has(id)) {
+                  newSelection.delete(id)
+                } else {
+                  newSelection.add(id)
+                }
+                setSelectedPricingRules(newSelection)
+              }}
+              onToggleBasePricingSelection={(id: string) => {
+                const newSelection = new Set(selectedBasePricing)
+                if (newSelection.has(id)) {
+                  newSelection.delete(id)
+                } else {
+                  newSelection.add(id)
+                }
+                setSelectedBasePricing(newSelection)
+              }}
+              onSelectAllPricingRules={() => {
+                setSelectedPricingRules(new Set(pricingRules.map(r => r.id)))
+              }}
+              onSelectAllBasePricing={() => {
+                setSelectedBasePricing(new Set(basePricing.map(p => p.id!)))
+              }}
             />
           )}
 
@@ -464,6 +508,19 @@ export default function AdminPage() {
               onRefresh={fetchData}
               saving={saving}
               setSaving={setSaving}
+              selectedSpecials={selectedSpecials}
+              onToggleSpecialSelection={(id: string) => {
+                const newSelection = new Set(selectedSpecials)
+                if (newSelection.has(id)) {
+                  newSelection.delete(id)
+                } else {
+                  newSelection.add(id)
+                }
+                setSelectedSpecials(newSelection)
+              }}
+              onSelectAllSpecials={(specialIds: string[]) => {
+                setSelectedSpecials(new Set(specialIds))
+              }}
             />
           )}
 
@@ -473,11 +530,38 @@ export default function AdminPage() {
               onRefresh={fetchData}
               saving={saving}
               setSaving={setSaving}
+              selectedBundles={selectedBundles}
+              onToggleBundleSelection={(id: string) => {
+                const newSelection = new Set(selectedBundles)
+                if (newSelection.has(id)) {
+                  newSelection.delete(id)
+                } else {
+                  newSelection.add(id)
+                }
+                setSelectedBundles(newSelection)
+              }}
+              onSelectAllBundles={(bundleIds: string[]) => {
+                setSelectedBundles(new Set(bundleIds))
+              }}
             />
           )}
 
-          {activeTab === 'settings' && (
-            <SettingsPanel settings={settings} />
+
+
+          {activeTab === 'display' && (
+            <DisplayControlsPanel onRefresh={fetchData} />
+          )}
+
+          {activeTab === 'layout-flower' && (
+            <LayoutConfigPanel page="flower" />
+          )}
+
+          {activeTab === 'layout-vapes' && (
+            <LayoutConfigPanel page="vapes" />
+          )}
+
+          {activeTab === 'layout-edibles' && (
+            <LayoutConfigPanel page="edibles" />
           )}
         </div>
       </main>
@@ -653,23 +737,23 @@ function TypeSection({
 
       {products.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[800px]">
             <thead className="bg-white/5 border-b border-white/10">
               <tr>
-                <th className="text-left py-3 px-4 text-sm font-apple-semibold text-white/80 w-8"></th>
-                <th className="text-left py-3 px-4 text-sm font-apple-semibold text-white/80">Name</th>
-                <th className="text-left py-3 px-4 text-sm font-apple-semibold text-white/80">Price</th>
+                <th className="text-left py-4 px-6 text-sm font-apple-semibold text-white/80 w-12"></th>
+                <th className="text-left py-4 px-6 text-sm font-apple-semibold text-white/80 min-w-[200px]">Name</th>
+                <th className="text-left py-4 px-6 text-sm font-apple-semibold text-white/80 min-w-[100px]">Price</th>
                 {(category === 'flower' || category === 'vapes') && (
                   <>
-                    <th className="text-left py-3 px-4 text-sm font-apple-semibold text-white/80">THCA</th>
-                    <th className="text-left py-3 px-4 text-sm font-apple-semibold text-white/80">Terpenes</th>
+                    <th className="text-left py-4 px-6 text-sm font-apple-semibold text-white/80 min-w-[80px]">THCA</th>
+                    <th className="text-left py-4 px-6 text-sm font-apple-semibold text-white/80 min-w-[120px]">Terpenes</th>
                   </>
                 )}
                 {category === 'edibles' && (
-                  <th className="text-left py-3 px-4 text-sm font-apple-semibold text-white/80">Dosage</th>
+                  <th className="text-left py-4 px-6 text-sm font-apple-semibold text-white/80 min-w-[100px]">Dosage</th>
                 )}
-                <th className="text-left py-3 px-4 text-sm font-apple-semibold text-white/80">Status</th>
-                <th className="text-right py-3 px-4 text-sm font-apple-semibold text-white/80">Actions</th>
+                <th className="text-left py-4 px-6 text-sm font-apple-semibold text-white/80 min-w-[100px]">Status</th>
+                <th className="text-right py-4 px-6 text-sm font-apple-semibold text-white/80 min-w-[140px]">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -755,69 +839,80 @@ function ProductRow({
     setEditing(null)
   }
 
+  const handleRowClick = (e: React.MouseEvent) => {
+    // Don't trigger selection if clicking on buttons, inputs, or other interactive elements
+    if ((e.target as HTMLElement).tagName === 'BUTTON' || 
+        (e.target as HTMLElement).tagName === 'INPUT' ||
+        (e.target as HTMLElement).closest('button') ||
+        (e.target as HTMLElement).closest('input')) {
+      return
+    }
+    onToggleSelection()
+  }
+
   if (isEditing) {
     return (
       <tr className={`${isEven ? 'bg-white/5' : ''} border-b border-white/5`}>
-        <td className="py-3 px-4">
+        <td className="py-4 px-6">
           <input
             type="checkbox"
             checked={isSelected}
             onChange={onToggleSelection}
-            className="rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400"
+            className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
           />
         </td>
-        <td className="py-3 px-4">
+        <td className="py-4 px-6">
           <input
             type="text"
             value={editForm.name}
             onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-            className="w-full px-3 py-1 bg-white/10 backdrop-blur-xl rounded-lg text-white placeholder-white/60 border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 text-sm"
+            className="w-full px-3 py-2 bg-white/10 backdrop-blur-xl rounded-lg text-white placeholder-white/60 border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 text-sm"
             placeholder="Product name"
           />
         </td>
-        <td className="py-3 px-4">
+        <td className="py-4 px-6">
           <input
             type="text"
             value={editForm.price}
             onChange={(e) => setEditForm({...editForm, price: e.target.value})}
-            className="w-full px-3 py-1 bg-white/10 backdrop-blur-xl rounded-lg text-white placeholder-white/60 border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 text-sm"
+            className="w-full px-3 py-2 bg-white/10 backdrop-blur-xl rounded-lg text-white placeholder-white/60 border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 text-sm"
             placeholder="Price"
           />
         </td>
         {(category === 'flower' || category === 'vapes') && (
           <>
-            <td className="py-3 px-4">
+            <td className="py-4 px-6">
               <input
                 type="text"
                 value={editForm.thca}
                 onChange={(e) => setEditForm({...editForm, thca: e.target.value})}
-                className="w-full px-3 py-1 bg-white/10 backdrop-blur-xl rounded-lg text-white placeholder-white/60 border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 text-sm"
+                className="w-full px-3 py-2 bg-white/10 backdrop-blur-xl rounded-lg text-white placeholder-white/60 border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 text-sm"
                 placeholder="THCA %"
               />
             </td>
-            <td className="py-3 px-4">
+            <td className="py-4 px-6">
               <input
                 type="text"
                 value={editForm.terpenes}
                 onChange={(e) => setEditForm({...editForm, terpenes: e.target.value})}
-                className="w-full px-3 py-1 bg-white/10 backdrop-blur-xl rounded-lg text-white placeholder-white/60 border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 text-sm"
+                className="w-full px-3 py-2 bg-white/10 backdrop-blur-xl rounded-lg text-white placeholder-white/60 border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 text-sm"
                 placeholder="Terpenes"
               />
             </td>
           </>
         )}
         {category === 'edibles' && (
-          <td className="py-3 px-4">
+          <td className="py-4 px-6">
             <input
               type="text"
               value={editForm.dosage}
               onChange={(e) => setEditForm({...editForm, dosage: e.target.value})}
-              className="w-full px-3 py-1 bg-white/10 backdrop-blur-xl rounded-lg text-white placeholder-white/60 border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 text-sm"
+              className="w-full px-3 py-2 bg-white/10 backdrop-blur-xl rounded-lg text-white placeholder-white/60 border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 text-sm"
               placeholder="Dosage"
             />
           </td>
         )}
-        <td className="py-3 px-4">
+        <td className="py-4 px-6">
           <button
             onClick={() => onUpdate(product, { in_stock: !product.in_stock })}
             className={`px-3 py-1 text-xs rounded-full transition-all duration-200 font-apple-medium ${
@@ -830,7 +925,7 @@ function ProductRow({
             {product.in_stock ? 'In Stock' : 'Out of Stock'}
           </button>
         </td>
-        <td className="py-3 px-4 text-right">
+        <td className="py-4 px-6 text-right">
           <div className="flex justify-end space-x-2">
             <button
               onClick={handleSave}
@@ -853,30 +948,33 @@ function ProductRow({
   }
 
   return (
-    <tr className={`${isSelected ? 'bg-emerald-900/20' : isEven ? 'bg-white/5' : ''} hover:bg-white/10 transition-all duration-200 border-b border-white/5`}>
-      <td className="py-3 px-4">
+    <tr 
+      className={`${isSelected ? 'bg-emerald-900/20 border-emerald-400/30' : isEven ? 'bg-white/5' : ''} hover:bg-white/10 transition-all duration-200 border-b border-white/5 cursor-pointer select-none`}
+      onClick={handleRowClick}
+    >
+      <td className="py-4 px-6">
         <input
           type="checkbox"
           checked={isSelected}
           onChange={onToggleSelection}
-          className="rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400"
+          className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
         />
       </td>
-      <td className="py-3 px-4">
+      <td className="py-4 px-6">
         <div className="font-apple-semibold text-white">{product.name}</div>
         {product.description && (
           <div className="text-xs text-white/60 font-apple-medium mt-1 max-w-xs truncate">{product.description}</div>
         )}
       </td>
-      <td className="py-3 px-4">
+      <td className="py-4 px-6">
         <span className="text-emerald-400 font-apple-bold">{product.price}</span>
       </td>
       {(category === 'flower' || category === 'vapes') && (
         <>
-          <td className="py-3 px-4">
+          <td className="py-4 px-6">
             <span className="text-white font-apple-medium">{product.thca || '-'}</span>
           </td>
-          <td className="py-3 px-4">
+          <td className="py-4 px-6">
             <span className="text-white/80 font-apple-medium text-sm">
               {product.terpenes && product.terpenes.length > 0 ? product.terpenes[0] : '-'}
             </span>
@@ -884,11 +982,11 @@ function ProductRow({
         </>
       )}
       {category === 'edibles' && (
-        <td className="py-3 px-4">
+        <td className="py-4 px-6">
           <span className="text-white font-apple-medium">{product.dosage || '-'}</span>
         </td>
       )}
-      <td className="py-3 px-4">
+      <td className="py-4 px-6">
         <button
           onClick={() => onUpdate(product, { in_stock: !product.in_stock })}
           className={`px-3 py-1 text-xs rounded-full transition-all duration-200 font-apple-medium ${
@@ -901,7 +999,7 @@ function ProductRow({
           {product.in_stock ? 'In Stock' : 'Out of Stock'}
         </button>
       </td>
-      <td className="py-3 px-4 text-right">
+      <td className="py-4 px-6 text-right">
         <div className="flex justify-end space-x-2">
           <button
             onClick={() => setEditing(product)}
@@ -930,7 +1028,13 @@ function PricingPanel({
   products,
   onRefresh,
   saving,
-  setSaving
+  setSaving,
+  selectedPricingRules,
+  selectedBasePricing,
+  onTogglePricingRuleSelection,
+  onToggleBasePricingSelection,
+  onSelectAllPricingRules,
+  onSelectAllBasePricing
 }: {
   pricingRules: PricingRule[]
   basePricing: BasePricing[]
@@ -938,6 +1042,12 @@ function PricingPanel({
   onRefresh: () => Promise<void>
   saving: boolean
   setSaving: (saving: boolean) => void
+  selectedPricingRules: Set<string>
+  selectedBasePricing: Set<string>
+  onTogglePricingRuleSelection: (id: string) => void
+  onToggleBasePricingSelection: (id: string) => void
+  onSelectAllPricingRules: () => void
+  onSelectAllBasePricing: () => void
 }) {
   const [showAddRule, setShowAddRule] = useState(false)
   const [showPriceCalculator, setShowPriceCalculator] = useState(false)
@@ -1056,6 +1166,12 @@ function PricingPanel({
               <span>Refresh</span>
             </button>
             <button
+              onClick={onSelectAllPricingRules}
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-xl text-sm transition-all duration-200 text-white font-apple-medium border border-white/20"
+            >
+              Select All Rules
+            </button>
+            <button
               onClick={() => setShowPriceCalculator(true)}
               className="px-6 py-3 bg-blue-600/80 hover:bg-blue-600 backdrop-blur-xl rounded-xl transition-all duration-200 text-white font-apple-medium border border-blue-400/30"
             >
@@ -1078,9 +1194,32 @@ function PricingPanel({
         {pricingRules.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {pricingRules.map(rule => (
-              <div key={rule.id} className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+              <div 
+                key={rule.id} 
+                className={`bg-white/10 backdrop-blur-md rounded-xl p-4 border transition-all duration-200 cursor-pointer select-none ${
+                  selectedPricingRules.has(rule.id) ? 'border-emerald-400/50 bg-emerald-900/20' : 'border-white/20'
+                } hover:bg-white/15`}
+                onClick={(e) => {
+                  // Don't trigger selection if clicking on buttons, inputs, or other interactive elements
+                  if ((e.target as HTMLElement).tagName === 'BUTTON' || 
+                      (e.target as HTMLElement).tagName === 'INPUT' ||
+                      (e.target as HTMLElement).closest('button') ||
+                      (e.target as HTMLElement).closest('input')) {
+                    return
+                  }
+                  onTogglePricingRuleSelection(rule.id)
+                }}
+              >
                 <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-apple-semibold text-white">{rule.name}</h4>
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedPricingRules.has(rule.id)}
+                      onChange={() => onTogglePricingRuleSelection(rule.id)}
+                      className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    />
+                    <h4 className="font-apple-semibold text-white">{rule.name}</h4>
+                  </div>
                   <button
                     onClick={() => deletePricingRule(rule.id)}
                     className="text-red-400 hover:text-red-300 text-sm font-apple-medium transition-colors duration-200"
@@ -1113,12 +1252,20 @@ function PricingPanel({
       <div className="bg-white/5 backdrop-blur-md rounded-xl border border-white/20 p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-apple-bold text-white drop-shadow-lg">Base Pricing Management</h3>
-          <button
-            onClick={() => setShowAddBasePricing(true)}
-            className="px-4 py-2 bg-green-600/80 hover:bg-green-600 backdrop-blur-xl rounded-lg transition-all duration-200 text-white font-apple-medium border border-green-400/30"
-          >
-            + Add Pricing Tier
-          </button>
+          <div className="flex space-x-3">
+            <button
+              onClick={onSelectAllBasePricing}
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-lg text-sm transition-all duration-200 text-white font-apple-medium border border-white/20"
+            >
+              Select All
+            </button>
+            <button
+              onClick={() => setShowAddBasePricing(true)}
+              className="px-4 py-2 bg-green-600/80 hover:bg-green-600 backdrop-blur-xl rounded-lg transition-all duration-200 text-white font-apple-medium border border-green-400/30"
+            >
+              + Add Pricing Tier
+            </button>
+          </div>
         </div>
         
         {['flower', 'vapes', 'edibles', 'concentrates', 'prerolls', 'moonwater'].map(category => {
@@ -1142,9 +1289,32 @@ function PricingPanel({
                     return a.weight_or_quantity.localeCompare(b.weight_or_quantity)
                   })
                   .map((pricing, index) => (
-                    <div key={pricing.id} className={`flex items-center justify-between p-3 rounded-lg ${index % 2 === 0 ? 'bg-white/5' : 'bg-white/10'}`}>
+                    <div 
+                      key={pricing.id} 
+                      className={`flex items-center justify-between p-3 rounded-lg transition-all duration-200 cursor-pointer select-none ${
+                        selectedBasePricing.has(pricing.id!) 
+                          ? 'bg-emerald-900/20 border border-emerald-400/30' 
+                          : index % 2 === 0 ? 'bg-white/5' : 'bg-white/10'
+                      } hover:bg-white/15`}
+                      onClick={(e) => {
+                        // Don't trigger selection if clicking on buttons, inputs, or other interactive elements
+                        if ((e.target as HTMLElement).tagName === 'BUTTON' || 
+                            (e.target as HTMLElement).tagName === 'INPUT' ||
+                            (e.target as HTMLElement).closest('button') ||
+                            (e.target as HTMLElement).closest('input')) {
+                          return
+                        }
+                        onToggleBasePricingSelection(pricing.id!)
+                      }}
+                    >
                       {editingBasePricing?.id === pricing.id ? (
                         <div className="flex items-center space-x-4 flex-1">
+                          <input
+                            type="checkbox"
+                            checked={selectedBasePricing.has(pricing.id!)}
+                            onChange={() => onToggleBasePricingSelection(pricing.id!)}
+                            className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                          />
                           <input
                             type="text"
                             value={editingBasePricing.weight_or_quantity}
@@ -1181,6 +1351,12 @@ function PricingPanel({
                       ) : (
                         <>
                           <div className="flex items-center space-x-4">
+                            <input
+                              type="checkbox"
+                              checked={selectedBasePricing.has(pricing.id!)}
+                              onChange={() => onToggleBasePricingSelection(pricing.id!)}
+                              className="rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400"
+                            />
                             <span className="text-white font-apple-semibold min-w-[80px]">
                               {pricing.weight_or_quantity}
                             </span>
@@ -1254,12 +1430,18 @@ function SpecialsPanel({
   products,
   onRefresh,
   saving,
-  setSaving
+  setSaving,
+  selectedSpecials,
+  onToggleSpecialSelection,
+  onSelectAllSpecials
 }: {
   products: Product[]
   onRefresh: () => Promise<void>
   saving: boolean
   setSaving: (saving: boolean) => void
+  selectedSpecials: Set<string>
+  onToggleSpecialSelection: (id: string) => void
+  onSelectAllSpecials: (specialIds: string[]) => void
 }) {
   const [specials, setSpecials] = useState<any[]>([])
   const [showAddSpecial, setShowAddSpecial] = useState(false)
@@ -1380,28 +1562,39 @@ function SpecialsPanel({
   const getTypeLabel = (type: string) => {
     switch (type) {
       case 'percentage_discount': return 'PERCENTAGE DISCOUNT'
-      case 'fixed_discount': return 'FIXED DISCOUNT'
+      case 'fixed_discount': return 'SPECIAL OFFER'
       case 'bundle': return 'BUNDLE DEAL'
       case 'special': return 'SPECIAL OFFER'
-      default: return 'OFFER'
+      default: return 'SPECIAL OFFER'
     }
   }
 
   const formatValue = (special: any) => {
     switch (special.type) {
       case 'percentage_discount': return `${special.value}% OFF`
-      case 'fixed_discount': return `$${special.value} OFF`
+      case 'fixed_discount': return `$${special.value}`
       case 'bundle': return `$${special.value}`
       case 'special': return `$${special.value}`
       default: return `$${special.value}`
     }
   }
 
+  const handleRowClick = (special: any, e: React.MouseEvent) => {
+    // Don't trigger selection if clicking on buttons, inputs, or other interactive elements
+    if ((e.target as HTMLElement).tagName === 'BUTTON' || 
+        (e.target as HTMLElement).tagName === 'INPUT' ||
+        (e.target as HTMLElement).closest('button') ||
+        (e.target as HTMLElement).closest('input')) {
+      return
+    }
+    onToggleSpecialSelection(special.id)
+  }
+
   return (
     <div className="space-y-6">
       <div className="p-6 bg-white/5 backdrop-blur-md rounded-xl border border-white/20">
         <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-don-graffiti text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>Specials & Deals</h2>
+          <h2 className="text-3xl font-don-graffiti text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>SPECIALS & DEALS</h2>
           <div className="flex space-x-3">
             <button
               onClick={onRefresh}
@@ -1414,6 +1607,12 @@ function SpecialsPanel({
               <span>Refresh</span>
             </button>
             <button
+              onClick={() => onSelectAllSpecials(specials.map(s => s.id))}
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-xl text-sm transition-all duration-200 text-white font-apple-medium border border-white/20"
+            >
+              Select All
+            </button>
+            <button
               onClick={() => setShowAddSpecial(true)}
               className="px-6 py-3 bg-purple-600/80 hover:bg-purple-600 backdrop-blur-xl rounded-xl transition-all duration-200 text-white font-apple-medium border border-purple-400/30"
               disabled={saving}
@@ -1424,258 +1623,205 @@ function SpecialsPanel({
         </div>
       </div>
 
-      {/* All Specials Table */}
-      <div className="bg-white/5 backdrop-blur-md rounded-xl border border-white/20 p-4 sm:p-6">
-        <h3 className="text-xl font-apple-bold text-white mb-4 drop-shadow-lg">All Specials & Deals ({specials.length})</h3>
+      {/* All Specials & Deals */}
+      <div className="bg-white/5 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden">
+        <div className="p-6 border-b border-white/10">
+          <h3 className="text-xl font-apple-bold text-white drop-shadow-lg">All Specials & Deals ({specials.length})</h3>
+        </div>
+        
         {specials.length > 0 ? (
-          <div className="space-y-2">
-            {/* Header - Hidden on mobile */}
-            <div className="hidden lg:grid grid-cols-7 gap-4 py-3 px-4 bg-white/10 rounded-lg font-apple-semibold text-white/80 text-sm">
-              <div>NAME</div>
-              <div>TYPE</div>
-              <div>CATEGORY</div>
-              <div>VALUE</div>
-              <div>STATUS</div>
-              <div>EXPIRES</div>
-              <div className="text-right">ACTIONS</div>
-            </div>
-            
-            {/* Specials List */}
-            {specials.map((special, index) => (
-              <div key={special.id} className={`rounded-lg transition-all duration-200 ${index % 2 === 0 ? 'bg-white/5' : 'bg-white/10'} hover:bg-white/15`}>
-                {/* Mobile Card Layout */}
-                <div className="lg:hidden p-4 space-y-3">
-                  {editingSpecial?.id === special.id ? (
-                    // Mobile Edit Mode
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-xs font-medium text-white/60 mb-1">NAME</label>
-                        <input
-                          type="text"
-                          value={editingSpecial.name}
-                          onChange={(e) => setEditingSpecial({...editingSpecial, name: e.target.value})}
-                          className="w-full px-2 py-1 bg-white/10 text-white rounded border border-white/20 focus:border-emerald-400/50 focus:outline-none text-sm"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-xs font-medium text-white/60 mb-1">CATEGORY</label>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-white/10 border-b border-white/10">
+                  <th className="text-left py-4 px-6 font-apple-semibold text-white/80 text-sm w-12">
+                    <input
+                      type="checkbox"
+                      checked={specials.length > 0 && specials.every(s => selectedSpecials.has(s.id))}
+                      onChange={() => {
+                        if (specials.every(s => selectedSpecials.has(s.id))) {
+                          // Deselect all
+                          specials.forEach(s => onToggleSpecialSelection(s.id))
+                        } else {
+                          // Select all
+                          onSelectAllSpecials(specials.map(s => s.id))
+                        }
+                      }}
+                      className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    />
+                  </th>
+                  <th className="text-left py-4 px-6 font-apple-semibold text-white/80 text-sm">NAME</th>
+                  <th className="text-left py-4 px-6 font-apple-semibold text-white/80 text-sm">TYPE</th>
+                  <th className="text-left py-4 px-6 font-apple-semibold text-white/80 text-sm">CATEGORY</th>
+                  <th className="text-left py-4 px-6 font-apple-semibold text-white/80 text-sm">VALUE</th>
+                  <th className="text-left py-4 px-6 font-apple-semibold text-white/80 text-sm">STATUS</th>
+                  <th className="text-left py-4 px-6 font-apple-semibold text-white/80 text-sm">EXPIRES</th>
+                  <th className="text-right py-4 px-6 font-apple-semibold text-white/80 text-sm">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {specials.map((special, index) => (
+                  <tr 
+                    key={special.id} 
+                    className={`transition-all duration-200 cursor-pointer select-none border-b border-white/5 ${
+                      selectedSpecials.has(special.id) 
+                        ? 'bg-emerald-900/20 border-emerald-400/30' 
+                        : index % 2 === 0 ? 'bg-white/5' : 'bg-white/2'
+                    } hover:bg-white/10`}
+                    onClick={(e) => handleRowClick(special, e)}
+                  >
+                    {editingSpecial?.id === special.id ? (
+                      // Edit Mode
+                      <>
+                        <td className="py-4 px-6">
+                          <input
+                            type="checkbox"
+                            checked={selectedSpecials.has(special.id)}
+                            onChange={() => onToggleSpecialSelection(special.id)}
+                            className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                          />
+                        </td>
+                        <td className="py-4 px-6">
+                          <input
+                            type="text"
+                            value={editingSpecial.name}
+                            onChange={(e) => setEditingSpecial({...editingSpecial, name: e.target.value})}
+                            className="w-full px-3 py-2 bg-white/10 text-white rounded-lg border border-white/20 focus:border-emerald-400/50 focus:outline-none text-sm"
+                            placeholder="Special name"
+                          />
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className={`inline-flex px-3 py-1 rounded-full text-xs font-apple-medium bg-${getTypeColor(special.type)}/20 text-${getTypeColor(special.type)}`}>
+                            {getTypeLabel(special.type)}
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
                           <select
                             value={editingSpecial.category}
                             onChange={(e) => setEditingSpecial({...editingSpecial, category: e.target.value})}
-                            className="w-full px-2 py-1 bg-white/10 text-white rounded border border-white/20 focus:border-emerald-400/50 focus:outline-none text-sm"
+                            className="w-full px-3 py-2 bg-white/10 text-white rounded-lg border border-white/20 focus:border-emerald-400/50 focus:outline-none text-sm"
                           >
                             <option value="flower">Flower</option>
                             <option value="vapes">Vapes</option>
                             <option value="edibles">Edibles</option>
                             <option value="all">All Categories</option>
                           </select>
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-white/60 mb-1">VALUE</label>
+                        </td>
+                        <td className="py-4 px-6">
                           <input
                             type="number"
                             value={editingSpecial.value}
                             onChange={(e) => setEditingSpecial({...editingSpecial, value: parseFloat(e.target.value)})}
-                            className="w-full px-2 py-1 bg-white/10 text-white rounded border border-white/20 focus:border-emerald-400/50 focus:outline-none text-sm"
+                            className="w-full px-3 py-2 bg-white/10 text-white rounded-lg border border-white/20 focus:border-emerald-400/50 focus:outline-none text-sm"
+                            placeholder="Value"
                           />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-white/60 mb-1">EXPIRES</label>
-                        <input
-                          type="date"
-                          value={editingSpecial.valid_until ? editingSpecial.valid_until.split('T')[0] : ''}
-                          onChange={(e) => setEditingSpecial({...editingSpecial, valid_until: e.target.value ? e.target.value + 'T23:59:59' : null})}
-                          className="w-full px-2 py-1 bg-white/10 text-white rounded border border-white/20 focus:border-emerald-400/50 focus:outline-none text-sm"
-                        />
-                      </div>
-                      <div className="flex space-x-2 pt-2">
-                        <button
-                          onClick={() => updateSpecial(special.id, editingSpecial)}
-                          className="flex-1 px-3 py-2 bg-green-500/80 hover:bg-green-500 text-white rounded text-sm font-apple-medium transition-all duration-200"
-                          disabled={saving}
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={() => setEditingSpecial(null)}
-                          className="flex-1 px-3 py-2 bg-gray-500/80 hover:bg-gray-500 text-white rounded text-sm font-apple-medium transition-all duration-200"
-                          disabled={saving}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    // Mobile View Mode
-                    <div>
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-apple-semibold text-white text-lg">{special.name}</h4>
-                        <div className={`px-2 py-1 rounded-full text-xs font-apple-medium ${special.is_active ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                          {special.is_active ? 'ACTIVE' : 'INACTIVE'}
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <div className="text-white/60 font-apple-medium">Type</div>
-                          <div className={`text-${getTypeColor(special.type)} font-apple-medium`}>{getTypeLabel(special.type)}</div>
-                        </div>
-                        <div>
-                          <div className="text-white/60 font-apple-medium">Category</div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className={`inline-flex px-3 py-1 rounded-full text-xs font-apple-medium ${
+                            special.is_active ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                          }`}>
+                            {special.is_active ? 'ACTIVE' : 'INACTIVE'}
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <input
+                            type="date"
+                            value={editingSpecial.valid_until ? editingSpecial.valid_until.split('T')[0] : ''}
+                            onChange={(e) => setEditingSpecial({...editingSpecial, valid_until: e.target.value ? e.target.value + 'T23:59:59' : null})}
+                            className="w-full px-3 py-2 bg-white/10 text-white rounded-lg border border-white/20 focus:border-emerald-400/50 focus:outline-none text-sm"
+                          />
+                        </td>
+                        <td className="py-4 px-6 text-right">
+                          <div className="flex justify-end space-x-2">
+                            <button
+                              onClick={() => updateSpecial(special.id, editingSpecial)}
+                              className="px-3 py-1 bg-green-500/80 hover:bg-green-500 text-white rounded-lg text-sm font-apple-medium transition-all duration-200"
+                              disabled={saving}
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={() => setEditingSpecial(null)}
+                              className="px-3 py-1 bg-gray-500/80 hover:bg-gray-500 text-white rounded-lg text-sm font-apple-medium transition-all duration-200"
+                              disabled={saving}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </td>
+                      </>
+                    ) : (
+                      // View Mode
+                      <>
+                        <td className="py-4 px-6">
+                          <input
+                            type="checkbox"
+                            checked={selectedSpecials.has(special.id)}
+                            onChange={() => onToggleSpecialSelection(special.id)}
+                            className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                          />
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="font-apple-semibold text-white text-lg">{special.name}</div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className={`inline-flex px-3 py-1 rounded-full text-xs font-apple-medium bg-${getTypeColor(special.type)}/20 text-${getTypeColor(special.type)}`}>
+                            {getTypeLabel(special.type)}
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
                           <div className="text-white/70 font-apple-medium capitalize">{special.category}</div>
-                        </div>
-                        <div>
-                          <div className="text-white/60 font-apple-medium">Value</div>
-                          <div className={`text-${getTypeColor(special.type)} font-apple-bold text-lg`}>{formatValue(special)}</div>
-                        </div>
-                        <div>
-                          <div className="text-white/60 font-apple-medium">Expires</div>
-                          <div className="text-white/60 font-apple-medium">{special.valid_until ? new Date(special.valid_until).toLocaleDateString() : 'No expiry'}</div>
-                        </div>
-                      </div>
-                      <div className="flex space-x-2 pt-3 border-t border-white/10 mt-3">
-                        <button
-                          onClick={() => toggleSpecialStatus(special.id, special.is_active)}
-                          className={`flex-1 px-3 py-2 rounded text-sm font-apple-medium transition-all duration-200 ${
-                            special.is_active 
-                              ? `bg-${getTypeColor(special.type)}/20 text-${getTypeColor(special.type)} hover:bg-${getTypeColor(special.type)}/30`
-                              : 'bg-gray-600/20 text-gray-400 hover:bg-gray-600/30'
-                          }`}
-                          disabled={saving}
-                        >
-                          {special.is_active ? 'Deactivate' : 'Activate'}
-                        </button>
-                        <button
-                          onClick={() => setEditingSpecial(special)}
-                          className="px-3 py-2 bg-blue-500/80 hover:bg-blue-500 text-white rounded text-sm font-apple-medium transition-all duration-200"
-                          disabled={saving}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => deleteSpecial(special.id)}
-                          className="px-3 py-2 bg-red-500/80 hover:bg-red-500 text-white rounded text-sm font-apple-medium transition-all duration-200"
-                          disabled={saving}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Desktop Grid Layout */}
-                <div className="hidden lg:grid grid-cols-7 gap-4 py-3 px-4">
-                {editingSpecial?.id === special.id ? (
-                  // Edit Mode
-                  <>
-                    <input
-                      type="text"
-                      value={editingSpecial.name}
-                      onChange={(e) => setEditingSpecial({...editingSpecial, name: e.target.value})}
-                      className="px-2 py-1 bg-white/10 text-white rounded border border-white/20 focus:border-emerald-400/50 focus:outline-none"
-                    />
-                    <div className={`text-${getTypeColor(special.type)} font-apple-medium text-sm`}>
-                      {getTypeLabel(special.type)}
-                    </div>
-                    <select
-                      value={editingSpecial.category}
-                      onChange={(e) => setEditingSpecial({...editingSpecial, category: e.target.value})}
-                      className="px-2 py-1 bg-white/10 text-white rounded border border-white/20 focus:border-emerald-400/50 focus:outline-none"
-                    >
-                      <option value="flower">Flower</option>
-                      <option value="vapes">Vapes</option>
-                      <option value="edibles">Edibles</option>
-                      <option value="all">All Categories</option>
-                    </select>
-                    <input
-                      type="number"
-                      value={editingSpecial.value}
-                      onChange={(e) => setEditingSpecial({...editingSpecial, value: parseFloat(e.target.value)})}
-                      className="px-2 py-1 bg-white/10 text-white rounded border border-white/20 focus:border-emerald-400/50 focus:outline-none"
-                    />
-                    <div className={`px-3 py-1 rounded-full text-sm font-apple-medium ${special.is_active ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                      {special.is_active ? 'ACTIVE' : 'INACTIVE'}
-                    </div>
-                    <input
-                      type="date"
-                      value={editingSpecial.valid_until ? editingSpecial.valid_until.split('T')[0] : ''}
-                      onChange={(e) => setEditingSpecial({...editingSpecial, valid_until: e.target.value ? e.target.value + 'T23:59:59' : null})}
-                      className="px-2 py-1 bg-white/10 text-white rounded border border-white/20 focus:border-emerald-400/50 focus:outline-none text-sm"
-                    />
-                    <div className="flex justify-end space-x-2">
-                      <button
-                        onClick={() => updateSpecial(special.id, editingSpecial)}
-                        className="px-3 py-1 bg-green-500/80 hover:bg-green-500 text-white rounded text-sm font-apple-medium transition-all duration-200"
-                        disabled={saving}
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => setEditingSpecial(null)}
-                        className="px-3 py-1 bg-gray-500/80 hover:bg-gray-500 text-white rounded text-sm font-apple-medium transition-all duration-200"
-                        disabled={saving}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  // View Mode
-                  <>
-                    <div className="font-apple-semibold text-white">
-                      {special.name}
-                    </div>
-                    <div className={`text-${getTypeColor(special.type)} font-apple-medium text-sm`}>
-                      {getTypeLabel(special.type)}
-                    </div>
-                    <div className="text-white/70 font-apple-medium capitalize">
-                      {special.category}
-                    </div>
-                    <div className={`text-${getTypeColor(special.type)} font-apple-bold`}>
-                      {formatValue(special)}
-                    </div>
-                    <div>
-                      <button
-                        onClick={() => toggleSpecialStatus(special.id, special.is_active)}
-                        className={`px-3 py-1 rounded-full text-sm font-apple-medium transition-all duration-200 ${
-                          special.is_active 
-                            ? `bg-${getTypeColor(special.type)}/20 text-${getTypeColor(special.type)} hover:bg-${getTypeColor(special.type)}/30`
-                            : 'bg-gray-600/20 text-gray-400 hover:bg-gray-600/30'
-                        }`}
-                        disabled={saving}
-                      >
-                        {special.is_active ? 'ACTIVE' : 'INACTIVE'}
-                      </button>
-                    </div>
-                    <div className="text-white/60 font-apple-medium text-sm">
-                      {special.valid_until ? new Date(special.valid_until).toLocaleDateString() : 'No expiry'}
-                    </div>
-                    <div className="flex justify-end space-x-2">
-                      <button
-                        onClick={() => setEditingSpecial(special)}
-                        className="px-3 py-1 bg-blue-500/80 hover:bg-blue-500 text-white rounded text-sm font-apple-medium transition-all duration-200"
-                        disabled={saving}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => deleteSpecial(special.id)}
-                        className="px-3 py-1 bg-red-500/80 hover:bg-red-500 text-white rounded text-sm font-apple-medium transition-all duration-200"
-                        disabled={saving}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </>
-                )}
-                </div>
-              </div>
-            ))}
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className={`text-${getTypeColor(special.type)} font-apple-bold text-lg`}>
+                            {formatValue(special)}
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <button
+                            onClick={() => toggleSpecialStatus(special.id, special.is_active)}
+                            className={`inline-flex px-3 py-1 rounded-full text-xs font-apple-medium transition-all duration-200 ${
+                              special.is_active 
+                                ? `bg-green-500/20 text-green-400 hover:bg-green-500/30`
+                                : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                            }`}
+                            disabled={saving}
+                          >
+                            {special.is_active ? 'ACTIVE' : 'INACTIVE'}
+                          </button>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="text-white/60 font-apple-medium text-sm">
+                            {special.valid_until ? new Date(special.valid_until).toLocaleDateString() : 'No expiry'}
+                          </div>
+                        </td>
+                        <td className="py-4 px-6 text-right">
+                          <div className="flex justify-end space-x-2">
+                            <button
+                              onClick={() => setEditingSpecial(special)}
+                              className="px-3 py-1 bg-blue-500/80 hover:bg-blue-500 text-white rounded-lg text-sm font-apple-medium transition-all duration-200"
+                              disabled={saving}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => deleteSpecial(special.id)}
+                              className="px-3 py-1 bg-red-500/80 hover:bg-red-500 text-white rounded-lg text-sm font-apple-medium transition-all duration-200"
+                              disabled={saving}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         ) : (
-          <div className="text-center text-white/60 py-8">
+          <div className="text-center text-white/60 py-12">
             <div className="text-lg font-apple-semibold mb-2">No specials created</div>
             <div className="text-sm font-apple-medium">Create specials and deals to attract customers.</div>
           </div>
@@ -1700,12 +1846,18 @@ function BundlesPanel({
   products,
   onRefresh,
   saving,
-  setSaving
+  setSaving,
+  selectedBundles,
+  onToggleBundleSelection,
+  onSelectAllBundles
 }: {
   products: Product[]
   onRefresh: () => Promise<void>
   saving: boolean
   setSaving: (saving: boolean) => void
+  selectedBundles: Set<string>
+  onToggleBundleSelection: (id: string) => void
+  onSelectAllBundles: (bundleIds: string[]) => void
 }) {
   const [bundles, setBundles] = useState<any[]>([])
   const [showCreateBundle, setShowCreateBundle] = useState(false)
@@ -1784,6 +1936,12 @@ function BundlesPanel({
               <span>Refresh</span>
             </button>
             <button
+              onClick={() => onSelectAllBundles(bundles.map(b => b.id))}
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-xl text-sm transition-all duration-200 text-white font-apple-medium border border-white/20"
+            >
+              Select All
+            </button>
+            <button
               onClick={() => setShowCreateBundle(true)}
               className="px-6 py-3 bg-amber-600/80 hover:bg-amber-600 backdrop-blur-xl rounded-xl transition-all duration-200 text-white font-apple-medium border border-amber-400/30"
               disabled={saving}
@@ -1800,17 +1958,40 @@ function BundlesPanel({
         {bundles.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {bundles.map(bundle => (
-              <div key={bundle.id} className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+              <div 
+                key={bundle.id} 
+                className={`bg-white/10 backdrop-blur-md rounded-xl p-4 border transition-all duration-200 cursor-pointer select-none ${
+                  selectedBundles.has(bundle.id) ? 'border-emerald-400/50 bg-emerald-900/20' : 'border-white/20'
+                } hover:bg-white/15`}
+                onClick={(e) => {
+                  // Don't trigger selection if clicking on buttons, inputs, or other interactive elements
+                  if ((e.target as HTMLElement).tagName === 'BUTTON' || 
+                      (e.target as HTMLElement).tagName === 'INPUT' ||
+                      (e.target as HTMLElement).closest('button') ||
+                      (e.target as HTMLElement).closest('input')) {
+                    return
+                  }
+                  onToggleBundleSelection(bundle.id)
+                }}
+              >
                 <div className="flex justify-between items-start mb-2">
-                                      <h4 className="font-apple-semibold text-white">{bundle.name}</h4>
-                    <button
-                      onClick={() => deleteBundle(bundle.id)}
-                      className="text-red-400 hover:text-red-300 text-sm font-apple-medium transition-colors duration-200"
-                      disabled={saving}
-                    >
-                      Delete
-                    </button>
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedBundles.has(bundle.id)}
+                      onChange={() => onToggleBundleSelection(bundle.id)}
+                      className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    />
+                    <h4 className="font-apple-semibold text-white">{bundle.name}</h4>
                   </div>
+                  <button
+                    onClick={() => deleteBundle(bundle.id)}
+                    className="text-red-400 hover:text-red-300 text-sm font-apple-medium transition-colors duration-200"
+                    disabled={saving}
+                  >
+                    Delete
+                  </button>
+                </div>
                   <p className="text-sm text-white/70 mb-2 font-apple-medium">{bundle.description}</p>
                   <div className="text-sm text-white/60 mb-2 font-apple-medium">
                   {bundle.conditions?.bundle_type === 'category' ? (
@@ -1880,17 +2061,869 @@ function BundlesPanel({
   )
 }
 
-function SettingsPanel({ settings }: { settings: MenuSettings }) {
+function SettingsPanel({ settings, onRefresh }: { settings: any, onRefresh?: () => Promise<void> }) {
+  const [activeSettingsTab, setActiveSettingsTab] = useState<'global' | 'layout' | 'flower' | 'vapes' | 'edibles' | 'effects' | 'behavior'>('global')
+  const [localSettings, setLocalSettings] = useState(settings)
+  const [saving, setSaving] = useState(false)
+  const [lastSaved, setLastSaved] = useState<Date | null>(null)
+
+  // Update local settings when settings prop changes
+  useEffect(() => {
+    setLocalSettings(settings)
+  }, [settings])
+
+  const updateSetting = async (key: string, value: any) => {
+    try {
+      setSaving(true)
+      console.log('Updating setting:', key, '=', value, '(type:', typeof value, ')')
+      
+      const response = await fetch('/api/menu-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          setting_key: key, 
+          setting_value: value 
+        })
+      })
+
+      const responseText = await response.text()
+      console.log('API Response:', response.status, responseText)
+
+      if (!response.ok) {
+        let errorMessage = 'Failed to update setting'
+        try {
+          const errorData = JSON.parse(responseText)
+          errorMessage = errorData.error || errorMessage
+        } catch {
+          errorMessage = responseText || errorMessage
+        }
+        throw new Error(errorMessage)
+      }
+
+      const result = JSON.parse(responseText)
+      console.log('Setting updated successfully:', result)
+      
+      setLastSaved(new Date())
+      if (onRefresh) {
+        await onRefresh()
+      }
+    } catch (err) {
+      console.error('Error updating setting:', err)
+      alert('Error updating setting: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleSettingChange = (key: string, value: any) => {
+    setLocalSettings(prev => ({ ...prev, [key]: value }))
+    updateSetting(key, value)
+  }
+
+  const resetToDefaults = async () => {
+    if (!confirm('Reset all settings to defaults? This cannot be undone.')) return
+
+    try {
+      setSaving(true)
+      const response = await fetch('/api/menu-settings', {
+        method: 'PUT'
+      })
+      if (!response.ok) {
+        throw new Error('Failed to reset settings')
+      }
+      if (onRefresh) {
+        await onRefresh()
+      }
+    } catch (err) {
+      alert('Error resetting settings: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
-    <div className="space-y-6">
-      <h2 className="text-3xl font-bold">Settings</h2>
-      <div className="bg-gray-800 rounded-lg p-6">
-        <h3 className="text-xl font-bold mb-4">Display Configuration</h3>
-        <div className="text-gray-400">
-          Font Size: {settings.display_config?.font_size || 170}% • 
-          Auto Refresh: {settings.display_config?.auto_refresh_interval || 30}s
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="p-6 bg-white/5 backdrop-blur-md rounded-xl border border-white/20">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-don-graffiti text-white tracking-wide drop-shadow-lg" style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.7)' }}>Settings</h2>
+            <p className="text-white/60 font-apple-medium mt-2">Configure menu display and behavior</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            {lastSaved && (
+              <span className="text-xs text-emerald-400 font-apple-medium">
+                Last saved: {lastSaved.toLocaleTimeString()}
+              </span>
+            )}
+            <button
+              onClick={resetToDefaults}
+              className="px-4 py-2 bg-orange-600/80 hover:bg-orange-600 backdrop-blur-xl rounded-xl transition-all duration-200 text-white font-apple-medium border border-orange-400/30"
+              disabled={saving}
+            >
+              Reset All to Defaults
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Settings Tabs */}
+      <div className="bg-white/5 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden">
+        {/* Tab Navigation */}
+        <div className="border-b border-white/10 overflow-x-auto">
+          <div className="flex">
+            {[
+              { key: 'global', label: 'Global Display', icon: '🎨' },
+              { key: 'layout', label: 'Layout', icon: '📐' },
+              { key: 'flower', label: 'Flower Page', icon: '🌿' },
+              { key: 'vapes', label: 'Vapes Page', icon: '💨' },
+              { key: 'edibles', label: 'Edibles Page', icon: '🍪' },
+              { key: 'effects', label: 'Effects & Animation', icon: '✨' },
+              { key: 'behavior', label: 'Menu Behavior', icon: '⚙️' }
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveSettingsTab(tab.key as any)}
+                className={`px-6 py-4 font-apple-medium transition-all duration-200 whitespace-nowrap border-b-2 ${
+                  activeSettingsTab === tab.key
+                    ? 'text-emerald-400 bg-white/5 border-emerald-400'
+                    : 'text-white/70 hover:text-white border-transparent hover:bg-white/5'
+                }`}
+              >
+                <span className="mr-2">{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Tab Content */}
+        <div className="p-6">
+          {/* Global Display Settings */}
+          {activeSettingsTab === 'global' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">
+                    Global Font Scale
+                    <span className="text-emerald-400 ml-2">{localSettings.global_font_scale || 100}%</span>
+                  </label>
+                  <input
+                    type="range"
+                    min="50"
+                    max="150"
+                    step="5"
+                    value={localSettings.global_font_scale || 100}
+                    onChange={(e) => handleSettingChange('global_font_scale', parseInt(e.target.value))}
+                    className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                    disabled={saving}
+                  />
+                  <div className="flex justify-between text-xs text-white/60 font-apple-medium mt-1">
+                    <span>50%</span>
+                    <span>75%</span>
+                    <span>100%</span>
+                    <span>125%</span>
+                    <span>150%</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">Theme</label>
+                  <select
+                    value={localSettings.global_theme || 'dark'}
+                    onChange={(e) => handleSettingChange('global_theme', e.target.value)}
+                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl rounded-lg text-white border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 font-apple-medium"
+                    disabled={saving}
+                  >
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                    <option value="midnight">Midnight</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">Accent Color</label>
+                  <input
+                    type="color"
+                    value={localSettings.global_accent_color || '#10b981'}
+                    onChange={(e) => handleSettingChange('global_accent_color', e.target.value)}
+                    className="w-full h-12 bg-white/10 backdrop-blur-xl rounded-lg border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 cursor-pointer"
+                    disabled={saving}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">Background Style</label>
+                  <select
+                    value={localSettings.global_background_style || 'grid'}
+                    onChange={(e) => handleSettingChange('global_background_style', e.target.value)}
+                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl rounded-lg text-white border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 font-apple-medium"
+                    disabled={saving}
+                  >
+                    <option value="grid">Grid Pattern</option>
+                    <option value="gradient">Gradient</option>
+                    <option value="solid">Solid Color</option>
+                    <option value="stars">Starfield</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Layout Settings */}
+          {activeSettingsTab === 'layout' && (
+            <div className="space-y-6">
+              <div>
+                <h4 className="text-lg font-apple-bold text-white mb-4">Column Configuration</h4>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <div>
+                    <label className="block text-sm font-apple-semibold text-white mb-3">
+                      Flower Columns
+                      <span className="text-emerald-400 ml-2">{localSettings.layout_columns_flower || 3}</span>
+                    </label>
+                    <input
+                      type="range"
+                      min="1"
+                      max="4"
+                      step="1"
+                      value={localSettings.layout_columns_flower || 3}
+                      onChange={(e) => handleSettingChange('layout_columns_flower', parseInt(e.target.value))}
+                      className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                      disabled={saving}
+                    />
+                    <div className="flex justify-between text-xs text-white/60 font-apple-medium mt-1">
+                      <span>1</span>
+                      <span>2</span>
+                      <span>3</span>
+                      <span>4</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-apple-semibold text-white mb-3">
+                      Vapes Columns
+                      <span className="text-emerald-400 ml-2">{localSettings.layout_columns_vapes || 3}</span>
+                    </label>
+                    <input
+                      type="range"
+                      min="1"
+                      max="4"
+                      step="1"
+                      value={localSettings.layout_columns_vapes || 3}
+                      onChange={(e) => handleSettingChange('layout_columns_vapes', parseInt(e.target.value))}
+                      className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                      disabled={saving}
+                    />
+                    <div className="flex justify-between text-xs text-white/60 font-apple-medium mt-1">
+                      <span>1</span>
+                      <span>2</span>
+                      <span>3</span>
+                      <span>4</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-apple-semibold text-white mb-3">
+                      Edibles Columns
+                      <span className="text-emerald-400 ml-2">{localSettings.layout_columns_edibles || 2}</span>
+                    </label>
+                    <input
+                      type="range"
+                      min="1"
+                      max="4"
+                      step="1"
+                      value={localSettings.layout_columns_edibles || 2}
+                      onChange={(e) => handleSettingChange('layout_columns_edibles', parseInt(e.target.value))}
+                      className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                      disabled={saving}
+                    />
+                    <div className="flex justify-between text-xs text-white/60 font-apple-medium mt-1">
+                      <span>1</span>
+                      <span>2</span>
+                      <span>3</span>
+                      <span>4</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">Section Style</label>
+                  <select
+                    value={localSettings.layout_section_style || 'cards'}
+                    onChange={(e) => handleSettingChange('layout_section_style', e.target.value)}
+                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl rounded-lg text-white border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 font-apple-medium"
+                    disabled={saving}
+                  >
+                    <option value="cards">Cards</option>
+                    <option value="list">List</option>
+                    <option value="compact">Compact</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">Header Style</label>
+                  <select
+                    value={localSettings.layout_header_style || 'modern'}
+                    onChange={(e) => handleSettingChange('layout_header_style', e.target.value)}
+                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl rounded-lg text-white border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 font-apple-medium"
+                    disabled={saving}
+                  >
+                    <option value="modern">Modern</option>
+                    <option value="classic">Classic</option>
+                    <option value="minimal">Minimal</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">Spacing</label>
+                  <select
+                    value={localSettings.layout_spacing || 'normal'}
+                    onChange={(e) => handleSettingChange('layout_spacing', e.target.value)}
+                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl rounded-lg text-white border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 font-apple-medium"
+                    disabled={saving}
+                  >
+                    <option value="tight">Tight</option>
+                    <option value="normal">Normal</option>
+                    <option value="relaxed">Relaxed</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Flower Page Settings */}
+          {activeSettingsTab === 'flower' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="flower_show_thca"
+                    checked={localSettings.flower_show_thca ?? true}
+                    onChange={(e) => handleSettingChange('flower_show_thca', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="flower_show_thca" className="text-sm font-apple-semibold text-white">
+                    Show THCA %
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="flower_show_terpenes"
+                    checked={localSettings.flower_show_terpenes ?? true}
+                    onChange={(e) => handleSettingChange('flower_show_terpenes', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="flower_show_terpenes" className="text-sm font-apple-semibold text-white">
+                    Show Terpenes
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="flower_show_effects"
+                    checked={localSettings.flower_show_effects ?? true}
+                    onChange={(e) => handleSettingChange('flower_show_effects', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="flower_show_effects" className="text-sm font-apple-semibold text-white">
+                    Show Effects
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="flower_show_type_headers"
+                    checked={localSettings.flower_show_type_headers ?? true}
+                    onChange={(e) => handleSettingChange('flower_show_type_headers', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="flower_show_type_headers" className="text-sm font-apple-semibold text-white">
+                    Show Type Headers
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="flower_type_colors"
+                    checked={localSettings.flower_type_colors ?? true}
+                    onChange={(e) => handleSettingChange('flower_type_colors', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="flower_type_colors" className="text-sm font-apple-semibold text-white">
+                    Use Type Colors
+                  </label>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">Effects Display Style</label>
+                  <select
+                    value={localSettings.flower_effects_style || 'flipboard'}
+                    onChange={(e) => handleSettingChange('flower_effects_style', e.target.value)}
+                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl rounded-lg text-white border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 font-apple-medium"
+                    disabled={saving}
+                  >
+                    <option value="flipboard">Flipboard Animation</option>
+                    <option value="static">Static Text</option>
+                    <option value="scroll">Scrolling Text</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">Group Products By</label>
+                  <select
+                    value={localSettings.flower_group_by || 'type'}
+                    onChange={(e) => handleSettingChange('flower_group_by', e.target.value)}
+                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl rounded-lg text-white border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 font-apple-medium"
+                    disabled={saving}
+                  >
+                    <option value="type">Strain Type</option>
+                    <option value="effects">Effects</option>
+                    <option value="alphabetical">Alphabetical</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Vapes Page Settings */}
+          {activeSettingsTab === 'vapes' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="vapes_show_terpenes"
+                    checked={localSettings.vapes_show_terpenes ?? true}
+                    onChange={(e) => handleSettingChange('vapes_show_terpenes', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="vapes_show_terpenes" className="text-sm font-apple-semibold text-white">
+                    Show Terpenes
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="vapes_show_thca"
+                    checked={localSettings.vapes_show_thca ?? true}
+                    onChange={(e) => handleSettingChange('vapes_show_thca', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="vapes_show_thca" className="text-sm font-apple-semibold text-white">
+                    Show THCA %
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="vapes_show_effects"
+                    checked={localSettings.vapes_show_effects ?? true}
+                    onChange={(e) => handleSettingChange('vapes_show_effects', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="vapes_show_effects" className="text-sm font-apple-semibold text-white">
+                    Show Effects Flipboard
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="vapes_show_type_headers"
+                    checked={localSettings.vapes_show_type_headers ?? true}
+                    onChange={(e) => handleSettingChange('vapes_show_type_headers', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="vapes_show_type_headers" className="text-sm font-apple-semibold text-white">
+                    Show Type Headers
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-apple-semibold text-white mb-3">Group Products By</label>
+                <select
+                  value={localSettings.vapes_group_by || 'type'}
+                  onChange={(e) => handleSettingChange('vapes_group_by', e.target.value)}
+                  className="w-full max-w-xs px-4 py-3 bg-white/10 backdrop-blur-xl rounded-lg text-white border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 font-apple-medium"
+                  disabled={saving}
+                >
+                  <option value="type">Strain Type (Indica/Sativa/Hybrid)</option>
+                  <option value="alphabetical">Alphabetical</option>
+                  <option value="thca">THCA Content</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* Edibles Page Settings */}
+          {activeSettingsTab === 'edibles' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="edibles_show_dosage"
+                    checked={localSettings.edibles_show_dosage ?? true}
+                    onChange={(e) => handleSettingChange('edibles_show_dosage', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="edibles_show_dosage" className="text-sm font-apple-semibold text-white">
+                    Show Dosage
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="edibles_show_effects"
+                    checked={localSettings.edibles_show_effects ?? true}
+                    onChange={(e) => handleSettingChange('edibles_show_effects', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="edibles_show_effects" className="text-sm font-apple-semibold text-white">
+                    Show Effects Flipboard
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="edibles_show_type_headers"
+                    checked={localSettings.edibles_show_type_headers ?? true}
+                    onChange={(e) => handleSettingChange('edibles_show_type_headers', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="edibles_show_type_headers" className="text-sm font-apple-semibold text-white">
+                    Show Type Headers
+                  </label>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">Dosage Unit</label>
+                  <select
+                    value={localSettings.edibles_dosage_unit || 'mg'}
+                    onChange={(e) => handleSettingChange('edibles_dosage_unit', e.target.value)}
+                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl rounded-lg text-white border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 font-apple-medium"
+                    disabled={saving}
+                  >
+                    <option value="mg">Milligrams (mg)</option>
+                    <option value="g">Grams (g)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">Group Products By</label>
+                  <select
+                    value={localSettings.edibles_group_by || 'type'}
+                    onChange={(e) => handleSettingChange('edibles_group_by', e.target.value)}
+                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl rounded-lg text-white border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 font-apple-medium"
+                    disabled={saving}
+                  >
+                    <option value="type">Product Type (Cookies/Gummies/Moonwater)</option>
+                    <option value="dosage">Dosage</option>
+                    <option value="alphabetical">Alphabetical</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Effects & Animation Settings */}
+          {activeSettingsTab === 'effects' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="effects_flipboard_enabled"
+                    checked={localSettings.effects_flipboard_enabled ?? true}
+                    onChange={(e) => handleSettingChange('effects_flipboard_enabled', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="effects_flipboard_enabled" className="text-sm font-apple-semibold text-white">
+                    Enable Flipboard Effects
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="effects_page_transitions"
+                    checked={localSettings.effects_page_transitions ?? true}
+                    onChange={(e) => handleSettingChange('effects_page_transitions', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="effects_page_transitions" className="text-sm font-apple-semibold text-white">
+                    Page Transitions
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="effects_hover_animations"
+                    checked={localSettings.effects_hover_animations ?? true}
+                    onChange={(e) => handleSettingChange('effects_hover_animations', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="effects_hover_animations" className="text-sm font-apple-semibold text-white">
+                    Hover Animations
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="effects_background_animation"
+                    checked={localSettings.effects_background_animation ?? false}
+                    onChange={(e) => handleSettingChange('effects_background_animation', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="effects_background_animation" className="text-sm font-apple-semibold text-white">
+                    Background Animation
+                  </label>
+                </div>
+              </div>
+
+              {localSettings.effects_flipboard_enabled && (
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">
+                    Flipboard Speed
+                    <span className="text-emerald-400 ml-2">{(localSettings.effects_flipboard_speed || 4000) / 1000}s</span>
+                  </label>
+                  <input
+                    type="range"
+                    min="2000"
+                    max="10000"
+                    step="500"
+                    value={localSettings.effects_flipboard_speed || 4000}
+                    onChange={(e) => handleSettingChange('effects_flipboard_speed', parseInt(e.target.value))}
+                    className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                    disabled={saving}
+                  />
+                  <div className="flex justify-between text-xs text-white/60 font-apple-medium mt-1">
+                    <span>2s</span>
+                    <span>4s</span>
+                    <span>6s</span>
+                    <span>8s</span>
+                    <span>10s</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Menu Behavior Settings */}
+          {activeSettingsTab === 'behavior' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="menu_auto_refresh"
+                    checked={localSettings.menu_auto_refresh ?? true}
+                    onChange={(e) => handleSettingChange('menu_auto_refresh', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="menu_auto_refresh" className="text-sm font-apple-semibold text-white">
+                    Auto Refresh Menu
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="menu_show_out_of_stock"
+                    checked={localSettings.menu_show_out_of_stock ?? false}
+                    onChange={(e) => handleSettingChange('menu_show_out_of_stock', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="menu_show_out_of_stock" className="text-sm font-apple-semibold text-white">
+                    Show Out of Stock
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="menu_highlight_new"
+                    checked={localSettings.menu_highlight_new ?? true}
+                    onChange={(e) => handleSettingChange('menu_highlight_new', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="menu_highlight_new" className="text-sm font-apple-semibold text-white">
+                    Highlight New Products
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="feature_font_size_control"
+                    checked={localSettings.feature_font_size_control ?? true}
+                    onChange={(e) => handleSettingChange('feature_font_size_control', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="feature_font_size_control" className="text-sm font-apple-semibold text-white">
+                    Show Font Size Control
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="feature_navigation_menu"
+                    checked={localSettings.feature_navigation_menu ?? true}
+                    onChange={(e) => handleSettingChange('feature_navigation_menu', e.target.checked)}
+                    className="w-5 h-5 rounded bg-white/20 border-white/30 text-emerald-400 focus:ring-emerald-400 focus:ring-2"
+                    disabled={saving}
+                  />
+                  <label htmlFor="feature_navigation_menu" className="text-sm font-apple-semibold text-white">
+                    Show Navigation Menu
+                  </label>
+                </div>
+              </div>
+
+              {localSettings.menu_auto_refresh && (
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">
+                    Refresh Interval
+                    <span className="text-emerald-400 ml-2">{localSettings.menu_refresh_interval || 30}s</span>
+                  </label>
+                  <input
+                    type="range"
+                    min="10"
+                    max="300"
+                    step="10"
+                    value={localSettings.menu_refresh_interval || 30}
+                    onChange={(e) => handleSettingChange('menu_refresh_interval', parseInt(e.target.value))}
+                    className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                    disabled={saving}
+                  />
+                  <div className="flex justify-between text-xs text-white/60 font-apple-medium mt-1">
+                    <span>10s</span>
+                    <span>30s</span>
+                    <span>1min</span>
+                    <span>3min</span>
+                    <span>5min</span>
+                  </div>
+                </div>
+              )}
+
+              {localSettings.menu_highlight_new && (
+                <div>
+                  <label className="block text-sm font-apple-semibold text-white mb-3">
+                    New Product Days
+                    <span className="text-emerald-400 ml-2">{localSettings.menu_new_product_days || 7} days</span>
+                  </label>
+                  <input
+                    type="range"
+                    min="1"
+                    max="30"
+                    step="1"
+                    value={localSettings.menu_new_product_days || 7}
+                    onChange={(e) => handleSettingChange('menu_new_product_days', parseInt(e.target.value))}
+                    className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                    disabled={saving}
+                  />
+                  <div className="flex justify-between text-xs text-white/60 font-apple-medium mt-1">
+                    <span>1d</span>
+                    <span>7d</span>
+                    <span>14d</span>
+                    <span>21d</span>
+                    <span>30d</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="border-t border-white/10 pt-6">
+                <h4 className="text-lg font-apple-bold text-white mb-4">Custom Messages</h4>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-apple-semibold text-white mb-2">No Products Message</label>
+                    <input
+                      type="text"
+                      value={localSettings.message_no_products || 'Check back soon for updates!'}
+                      onChange={(e) => handleSettingChange('message_no_products', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl rounded-lg text-white border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 font-apple-medium"
+                      disabled={saving}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-apple-semibold text-white mb-2">Loading Message</label>
+                    <input
+                      type="text"
+                      value={localSettings.message_loading || 'Loading menu...'}
+                      onChange={(e) => handleSettingChange('message_loading', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl rounded-lg text-white border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 font-apple-medium"
+                      disabled={saving}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-apple-semibold text-white mb-2">Error Message</label>
+                    <input
+                      type="text"
+                      value={localSettings.message_error || 'Unable to load menu'}
+                      onChange={(e) => handleSettingChange('message_error', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl rounded-lg text-white border border-white/20 focus:border-emerald-400/50 focus:outline-none transition-all duration-200 font-apple-medium"
+                      disabled={saving}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Save Indicator */}
+      {saving && (
+        <div className="fixed bottom-4 right-4 bg-emerald-600/90 backdrop-blur-xl text-white px-4 py-2 rounded-lg shadow-lg border border-emerald-400/30">
+          <div className="flex items-center space-x-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+            <span className="font-apple-medium">Saving...</span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

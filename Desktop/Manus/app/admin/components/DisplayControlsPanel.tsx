@@ -73,8 +73,8 @@ export default function DisplayControlsPanel({ onRefresh }: DisplayControlsPanel
   ]
 
   return (
-    <div className="p-6 bg-gray-900 text-white min-h-screen">
-      <div className="flex items-center justify-between mb-6">
+    <div className="w-full max-w-none p-6 bg-gray-900 text-white min-h-screen">
+      <div className="w-full flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Display Controls</h2>
         {saveStatus && (
           <span className={`px-3 py-2 rounded text-sm ${

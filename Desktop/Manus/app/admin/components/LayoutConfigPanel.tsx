@@ -243,7 +243,7 @@ export default function LayoutConfigPanel({ page }: LayoutConfigPanelProps) {
 
   if (loading) {
     return (
-      <div className="p-6 bg-gray-900 text-white">
+      <div className="w-full max-w-none p-6 bg-gray-900 text-white">
         <h2 className="text-2xl font-bold mb-4">Layout Configuration - {page.toUpperCase()}</h2>
         <div className="text-center py-8">Loading layout configuration...</div>
       </div>
@@ -252,7 +252,7 @@ export default function LayoutConfigPanel({ page }: LayoutConfigPanelProps) {
 
   if (error) {
     return (
-      <div className="p-6 bg-gray-900 text-white">
+      <div className="w-full max-w-none p-6 bg-gray-900 text-white">
         <h2 className="text-2xl font-bold mb-4">Layout Configuration - {page.toUpperCase()}</h2>
         <div className="text-center py-8 text-red-400">Error: {error}</div>
       </div>
@@ -261,7 +261,7 @@ export default function LayoutConfigPanel({ page }: LayoutConfigPanelProps) {
 
   if (!layout) {
     return (
-      <div className="p-6 bg-gray-900 text-white">
+      <div className="w-full max-w-none p-6 bg-gray-900 text-white">
         <h2 className="text-2xl font-bold mb-4">Layout Configuration - {page.toUpperCase()}</h2>
         <div className="text-center py-8">No layout configuration found</div>
       </div>
@@ -269,8 +269,8 @@ export default function LayoutConfigPanel({ page }: LayoutConfigPanelProps) {
   }
 
   return (
-    <div className="p-6 bg-gray-900 text-white">
-      <div className="flex items-center justify-between mb-6">
+    <div className="w-full max-w-none p-6 bg-gray-900 text-white">
+      <div className="w-full flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Layout Configuration - {page.toUpperCase()}</h2>
         <div className="flex gap-2 items-center">
           {autoSaving && (
