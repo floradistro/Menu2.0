@@ -42,7 +42,7 @@ export default async function StorePage({ params }: PageProps) {
           
           <div className="flex justify-center mb-4">
             <Image
-              src="/logo.png"
+              src="/newlogo.png"
               alt="Cannabis Menu Logo"
               width={100}
               height={100}

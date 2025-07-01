@@ -29,7 +29,7 @@ export default async function StoreMenuPage({ params }: PageProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
               <Image
-                src="/logo.png"
+                src="/newlogo.png"
                 alt="Cannabis Menu Logo"
                 width={80}
                 height={80}

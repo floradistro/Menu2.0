@@ -35,11 +35,11 @@ export default async function Home() {
         <div className="text-center mb-16">
           <div className="flex justify-center mb-8">
             <Image
-              src="/logo.png"
+              src="/newlogo.png"
               alt="Cannabis Menu Logo"
-              width={120}
-              height={120}
-              className="w-30 h-30 object-contain"
+              width={200}
+              height={200}
+              className="w-50 h-50 object-contain"
             />
           </div>
           

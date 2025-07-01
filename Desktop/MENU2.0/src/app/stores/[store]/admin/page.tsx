@@ -27,7 +27,7 @@ export default function StoreAdminPage() {
             </Link>
             <div className="flex items-center gap-4">
               <Image
-                src="/logo.png"
+                src="/newlogo.png"
                 alt="Cannabis Menu Logo"
                 width={60}
                 height={60}
