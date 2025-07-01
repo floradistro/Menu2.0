@@ -24,24 +24,12 @@ export default async function StoreMenuPage({ params }: PageProps) {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
       <div className="border-b border-gray-700/50 bg-gray-900/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-6">
+        <div className="w-full px-3 py-3">
           <div className="flex items-center justify-between">
             <div>
-              <Link
-                href={`/stores/${params.store}`}
-                className="inline-flex items-center text-gray-400 hover:text-gray-300 transition-colors mb-2"
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Back to {store.name}
-              </Link>
-              <h1 className="text-3xl font-light tracking-wide text-gray-100 font-sf-pro-display">
-                {store.name} - {category}
+              <h1 className="text-7xl font-normal tracking-wide text-gray-100 lowercase" style={{ fontFamily: 'SF Pro Display, -apple-system, BlinkMacSystemFont, sans-serif' }}>
+                {category} menu
               </h1>
-              <p className="text-sm text-gray-400 mt-1">
-                Live inventory • Refreshes every 60 seconds
-              </p>
             </div>
             <div className="text-right">
               <div className="text-sm text-gray-500">

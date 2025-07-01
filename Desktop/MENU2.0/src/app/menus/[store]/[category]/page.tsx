@@ -18,7 +18,7 @@ export default async function MenuPage({ params }: PageProps) {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
       <div className="border-b border-gray-700/50 bg-gray-900/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-6">
+        <div className="w-full px-6 py-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-light tracking-wide text-gray-100 font-sf-pro-display">

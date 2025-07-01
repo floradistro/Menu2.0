@@ -13,6 +13,8 @@ export default function ProductManager() {
   const [loading, setLoading] = useState(true)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [showForm, setShowForm] = useState(false)
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set())
+  const [selectAll, setSelectAll] = useState(false)
   
   // Form state
   const [formData, setFormData] = useState<Partial<Product>>({
@@ -132,6 +134,50 @@ export default function ProductManager() {
     }
   }
 
+  const handleSelectProduct = (productId: string) => {
+    const newSelected = new Set(selectedProducts)
+    if (newSelected.has(productId)) {
+      newSelected.delete(productId)
+    } else {
+      newSelected.add(productId)
+    }
+    setSelectedProducts(newSelected)
+    setSelectAll(newSelected.size === products.length)
+  }
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedProducts(new Set())
+      setSelectAll(false)
+    } else {
+      setSelectedProducts(new Set(products.map(p => p.id)))
+      setSelectAll(true)
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedProducts.size === 0) return
+    
+    const confirmed = confirm(`Are you sure you want to delete ${selectedProducts.size} selected products? This action cannot be undone.`)
+    if (!confirmed) return
+
+    try {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .in('id', Array.from(selectedProducts))
+
+      if (error) throw error
+      
+      setSelectedProducts(new Set())
+      setSelectAll(false)
+      fetchProducts()
+      alert(`Successfully deleted ${selectedProducts.size} products.`)
+    } catch (error) {
+      alert('Error deleting products. Please try again.')
+    }
+  }
+
   if (loading) {
     return <div className="text-gray-400 text-center py-8">Loading products...</div>
   }
@@ -139,7 +185,18 @@ export default function ProductManager() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-light text-gray-100">Product Management</h2>
+        <div className="flex items-center space-x-4">
+          <h2 className="text-2xl font-light text-gray-100">Product Management</h2>
+          {selectedProducts.size > 0 && (
+            <button
+              onClick={handleBulkDelete}
+              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-600 to-red-500 text-white font-medium rounded-md hover:from-red-700 hover:to-red-600 transition-all duration-200 shadow-lg"
+            >
+              <span className="mr-2">🗑️</span>
+              Delete Selected ({selectedProducts.size})
+            </button>
+          )}
+        </div>
         <button
           onClick={() => {
             setShowForm(true)
@@ -338,6 +395,14 @@ export default function ProductManager() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-700">
+              <th className="text-left py-3 px-4 text-sm font-medium text-gray-400 w-12">
+                <input
+                  type="checkbox"
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                  className="rounded border-gray-600 bg-gray-800 text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
+                />
+              </th>
               <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Product Name</th>
               <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Category</th>
               <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Strain Type</th>
@@ -350,6 +415,14 @@ export default function ProductManager() {
           <tbody className="divide-y divide-gray-700">
             {products.map((product) => (
               <tr key={product.id} className="hover:bg-gray-700/30 transition-colors duration-150">
+                <td className="py-3 px-4">
+                  <input
+                    type="checkbox"
+                    checked={selectedProducts.has(product.id)}
+                    onChange={() => handleSelectProduct(product.id)}
+                    className="rounded border-gray-600 bg-gray-800 text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
+                  />
+                </td>
                 <td className="py-3 px-4 text-gray-200">{product.product_name}</td>
                 <td className="py-3 px-4 text-gray-300">{product.product_category || '-'}</td>
                 <td className="py-3 px-4 text-gray-300">{product.strain_type || '-'}</td>

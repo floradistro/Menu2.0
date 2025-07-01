@@ -4,6 +4,7 @@ import { useState } from 'react'
 import ProductManager from '@/components/admin/ProductManager'
 import StoreManager from '@/components/admin/StoreManager'
 import BulkUpload from '@/components/admin/BulkUpload'
+import ThemeManager from '@/components/admin/ThemeManager'
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('stores')
@@ -47,6 +48,17 @@ export default function AdminPage() {
                 <span className="mr-1">📤</span>
                 Bulk Upload
               </button>
+              <button
+                onClick={() => setActiveTab('themes')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'themes'
+                    ? 'border-green-500 text-green-400'
+                    : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'
+                }`}
+              >
+                <span className="mr-1">🎨</span>
+                Themes
+              </button>
             </nav>
           </div>
         </div>
@@ -55,6 +67,7 @@ export default function AdminPage() {
           {activeTab === 'stores' && <StoreManager />}
           {activeTab === 'products' && <ProductManager />}
           {activeTab === 'bulk-upload' && <BulkUpload />}
+          {activeTab === 'themes' && <ThemeManager />}
         </div>
       </div>
     </main>
