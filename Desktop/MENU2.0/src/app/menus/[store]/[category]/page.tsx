@@ -25,7 +25,7 @@ export default async function MenuPage({ params }: PageProps) {
                 {storeName} - {category}
               </h1>
               <p className="text-sm text-gray-400 mt-1">
-                Live inventory • Refreshes every 60 seconds
+                Live inventory • Configure refresh settings below
               </p>
             </div>
             <div className="text-sm text-gray-500">

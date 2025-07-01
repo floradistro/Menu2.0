@@ -98,7 +98,7 @@ export default async function StorePage({ params }: PageProps) {
           
           <div className="mt-12 text-center">
             <p className="text-sm text-gray-500">
-              Inventory updates every 60 seconds • {store.name} Location
+              Live inventory system • {store.name} Location
             </p>
           </div>
         </div>

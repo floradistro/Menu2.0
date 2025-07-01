@@ -257,7 +257,7 @@ export default function BulkUpload() {
       {preview.length > 0 && validationErrors.length === 0 && (
         <div className="bg-gray-700/30 rounded-lg p-4">
           <h3 className="text-gray-100 font-medium mb-4">Preview (First 5 products)</h3>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto hide-scrollbar">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-600">

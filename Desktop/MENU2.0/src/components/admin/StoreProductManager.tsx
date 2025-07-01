@@ -356,7 +356,7 @@ export default function StoreProductManager({ storeCode }: StoreProductManagerPr
       )}
 
       {/* Products Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto hide-scrollbar">
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-700">

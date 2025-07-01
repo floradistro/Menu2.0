@@ -82,7 +82,7 @@ export default async function Home() {
           
           <div className="mt-16 text-center">
             <p className="text-sm text-gray-500">
-              Live inventory updates every 30 seconds • Powered by Supabase
+              Live inventory system • Powered by Supabase
             </p>
           </div>
         </div>
