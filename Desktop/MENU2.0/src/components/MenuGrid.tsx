@@ -107,7 +107,7 @@ interface VestaboardDisplayProps {
 }
 
 function VestaboardDisplay({ text }: VestaboardDisplayProps) {
-  const MIN_DISPLAY_LENGTH = 35 // Minimum characters to display
+  const MIN_DISPLAY_LENGTH = 31 // Minimum characters to display (shortened by 4)
   const [displayLength, setDisplayLength] = useState(MIN_DISPLAY_LENGTH)
   const [currentText, setCurrentText] = useState('')
   
@@ -304,7 +304,7 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
               >
                 <td className="py-1 px-4">
                   <div 
-                    className="text-2xl font-medium"
+                    className="text-3xl font-medium"
                     style={{ color: theme.text_color }}
                   >
                     {product.product_name}
@@ -312,7 +312,7 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
                 </td>
                 <td className="py-1 px-3">
                   <span 
-                    className="text-base"
+                    className="text-lg"
                     style={{ color: theme.text_color }}
                   >
                     {product.description || '-'}
@@ -320,7 +320,7 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
                 </td>
                 <td className="py-1 px-3 text-left">
                   <span 
-                    className="text-xl font-semibold"
+                    className="text-2xl font-semibold"
                     style={{ color: theme.text_color }}
                   >
                     {product.strength || '-'}
@@ -365,7 +365,7 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
               className="text-right py-2 px-3 text-lg font-medium w-1/5"
               style={{ color: theme.text_color }}
             >
-              Potency
+              THCA %
             </th>
           </tr>
         </thead>
@@ -387,13 +387,13 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
               <td className="py-1 px-4">
                 <div className="grid grid-cols-12 items-center">
                   <div 
-                    className="text-2xl font-medium col-span-5"
+                    className="text-3xl font-medium col-span-5"
                     style={{ color: theme.text_color }}
                   >
                     {product.product_name}
                   </div>
                   <div 
-                    className="text-base col-span-7 opacity-70"
+                    className="text-lg col-span-7 opacity-70"
                     style={{ color: theme.text_color }}
                   >
                     {isFlowerOrVape ? (
@@ -407,7 +407,7 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
                 </div>
                 {!isFlowerOrVape && (
                   <div 
-                    className="flex items-center text-base opacity-70"
+                    className="flex items-center text-lg opacity-70"
                     style={{ color: theme.text_color }}
                   >
                     {product.terpene && <span>{product.terpene}</span>}
@@ -420,7 +420,7 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
               {!isFlowerOrVape && (
                 <td className="py-1 px-3 text-left">
                   <span 
-                    className="text-xl font-semibold"
+                    className="text-2xl font-semibold"
                     style={{ color: theme.text_color }}
                   >
                     {product.strength || '-'}
@@ -433,8 +433,8 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
                     // For flower and vape products: only show THCA, not Delta-9
                     <>
                       {product.thca_percent && (
-                        <span className="text-lg font-bold text-green-300">
-                          THCA {product.thca_percent}%
+                        <span className="text-xl font-bold text-green-300">
+                          {product.thca_percent}%
                         </span>
                       )}
                       {!product.thca_percent && (
@@ -445,12 +445,12 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
                     // For other products: show both THCA and Delta-9 as before
                     <>
                       {product.thca_percent && (
-                        <span className="text-lg font-bold text-green-300">
-                          THCA {product.thca_percent}%
+                        <span className="text-xl font-bold text-green-300">
+                          {product.thca_percent}%
                         </span>
                       )}
                       {product.delta9_percent && (
-                        <span className="text-lg font-bold text-blue-300">
+                        <span className="text-xl font-bold text-blue-300">
                           Δ9 {product.delta9_percent}%
                         </span>
                       )}
