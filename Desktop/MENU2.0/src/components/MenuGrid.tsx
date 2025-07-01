@@ -13,143 +13,44 @@ interface MenuGridProps {
   category: string
 }
 
-// Character reel for Vestaboard-style flip animation
-const CHARACTER_REEL = [
-  ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
-  'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-  'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
-  'X', 'Y', 'Z', '0', '1', '2', '3', '4',
-  '5', '6', '7', '8', '9', '!', '@', '#',
-  '$', '%', '&', '*', '(', ')', '-', '+',
-  '=', '?', '.', ',', ':', ';', '/', '\\'
-];
 
-interface FlapTileProps {
-  targetChar: string
-  delay?: number
-}
 
-function FlapTile({ targetChar, delay = 0 }: FlapTileProps) {
-  const [currentChar, setCurrentChar] = useState(' ')
-  const [isFlipping, setIsFlipping] = useState(false)
-
-  useEffect(() => {
-    const upperTarget = targetChar.toUpperCase()
-    const targetIndex = CHARACTER_REEL.indexOf(upperTarget)
-    const safeTargetIndex = targetIndex === -1 ? 0 : targetIndex
-    const finalChar = CHARACTER_REEL[safeTargetIndex]
-
-    if (currentChar === finalChar) return
-
-    const currentIndex = CHARACTER_REEL.indexOf(currentChar)
-    const safeCurrentIndex = currentIndex === -1 ? 0 : currentIndex
-
-    const totalSteps = (safeTargetIndex - safeCurrentIndex + CHARACTER_REEL.length) % CHARACTER_REEL.length
-    
-    if (totalSteps === 0) return
-
-    setIsFlipping(true)
-    let step = 0
-    let animationIndex = safeCurrentIndex
-
-    const timer = setTimeout(() => {
-      const interval = setInterval(() => {
-        step++
-        animationIndex = (animationIndex + 1) % CHARACTER_REEL.length
-        
-        if (step >= totalSteps) {
-          clearInterval(interval)
-          setCurrentChar(finalChar)
-          setIsFlipping(false)
-        } else {
-          setCurrentChar(CHARACTER_REEL[animationIndex])
-        }
-      }, 35)
-    }, delay)
-
-    return () => clearTimeout(timer)
-  }, [targetChar, delay])
-
-  return (
-    <div 
-      className="relative inline-block w-[14px] h-6 overflow-hidden bg-gray-900 rounded-sm shadow-inner" 
-      style={{ 
-        perspective: '100px',
-        boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.8)'
-      }}
-    >
-      <div 
-        className="absolute inset-0 flex items-center justify-center"
-        style={{
-          transformStyle: 'preserve-3d',
-          transform: isFlipping ? `rotateX(${CHARACTER_REEL.indexOf(currentChar) * -8}deg)` : 'rotateX(0deg)',
-          transformOrigin: 'center center',
-          transition: isFlipping ? 'none' : 'transform 100ms ease-out'
-        }}
-      >
-        <span 
-          className="font-sf-pro text-base leading-none select-none"
-          style={{
-            color: '#ffffff',
-            textShadow: `0 0 ${isFlipping ? '4px' : '2px'} rgba(255,255,255,0.3)`,
-            transition: 'all 50ms ease-out'
-          }}
-        >
-          {currentChar}
-        </span>
-      </div>
-    </div>
-  )
-}
-
-interface VestaboardDisplayProps {
+// Apple-style smooth text display component
+interface SmoothTextDisplayProps {
   text: string
 }
 
-function VestaboardDisplay({ text }: VestaboardDisplayProps) {
-  const MIN_DISPLAY_LENGTH = 31 // Minimum characters to display (shortened by 4)
-  const [displayLength, setDisplayLength] = useState(MIN_DISPLAY_LENGTH)
-  const [currentText, setCurrentText] = useState('')
-  
+function SmoothTextDisplay({ text }: SmoothTextDisplayProps) {
+  const [displayText, setDisplayText] = useState('')
+  const [isTransitioning, setIsTransitioning] = useState(false)
+
   useEffect(() => {
-    // Smoothly transition to new text
-    const targetLen = Math.max(text.length, MIN_DISPLAY_LENGTH, displayLength)
+    if (text === displayText) return
+
+    setIsTransitioning(true)
     
-    // Expand immediately if needed
-    if (text.length > displayLength) {
-      setDisplayLength(text.length)
-    }
-    
-    // Always pad to consistent length for smooth transitions
-    setCurrentText(text.padEnd(targetLen, ' '))
-    
-    // After animation completes, we can potentially shrink (but maintain minimum)
+    // Fade out, change text, then fade in
     const timer = setTimeout(() => {
-      const finalLen = Math.max(text.length, MIN_DISPLAY_LENGTH)
-      if (finalLen < displayLength) {
-        setDisplayLength(finalLen)
-        setCurrentText(text.padEnd(finalLen, ' '))
-      }
-    }, 2000) // Wait for flip animation to complete
-    
+      setDisplayText(text)
+      setIsTransitioning(false)
+    }, 200) // Half of the transition duration
+
     return () => clearTimeout(timer)
-  }, [text])
-  
+  }, [text, displayText])
+
   return (
-    <div 
-      className="inline-flex font-mono p-1 rounded transition-all duration-300"
-      style={{
-        backgroundColor: '#0a0a0a',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)'
-      }}
-    >
-      {currentText.split('').map((char, index) => (
-        <FlapTile 
-          key={`tile-${index}`}
-          targetChar={char}
-          delay={index * 15} // Slightly faster stagger for smoother wave
-        />
-      ))}
+    <div className="relative min-h-[24px] flex items-center justify-center">
+      <span 
+        className={`
+          transition-all duration-400 ease-out
+          ${isTransitioning ? 'opacity-0 transform scale-95' : 'opacity-100 transform scale-100'}
+        `}
+        style={{
+          transitionTimingFunction: 'cubic-bezier(0.4, 0.0, 0.2, 1)', // Apple's ease-out timing
+        }}
+      >
+        {displayText || text}
+      </span>
     </div>
   )
 }
@@ -347,7 +248,7 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
             >
               <div className="grid grid-cols-12 items-center">
                 <div className="col-span-5">Product</div>
-                <div className="col-span-7 text-base font-medium opacity-70">
+                <div className="col-span-7 text-base font-medium opacity-70 text-center">
                   {isFlowerOrVape ? (showLineage ? 'Lineage' : 'Terpene') : 'Lineage'}
                 </div>
               </div>
@@ -393,11 +294,11 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
                     {product.product_name}
                   </div>
                   <div 
-                    className="text-lg col-span-7 opacity-70"
+                    className="text-lg col-span-7 opacity-70 text-center"
                     style={{ color: theme.text_color }}
                   >
                     {isFlowerOrVape ? (
-                      <VestaboardDisplay 
+                      <SmoothTextDisplay 
                         text={showLineage ? (product.strain_cross || '-') : (product.terpene || '-')}
                       />
                     ) : (
