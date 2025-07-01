@@ -304,7 +304,7 @@ export default function BulkUpload() {
           </div>
           <div className="w-full bg-gray-700 rounded-full h-2">
             <div
-              className="bg-gradient-to-r from-green-600 to-green-500 h-2 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-blue-600 to-blue-500 h-2 rounded-full transition-all duration-300"
               style={{ width: `${uploadProgress}%` }}
             />
           </div>
@@ -333,7 +333,7 @@ export default function BulkUpload() {
       {preview.length > 0 && validationErrors.length === 0 && !uploading && !uploadResults && (
         <button
           onClick={handleUpload}
-          className="w-full py-3 bg-gradient-to-r from-green-600 to-green-500 text-white font-medium rounded-md hover:from-green-700 hover:to-green-600 transition-all duration-200 shadow-lg"
+          className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-medium rounded-md hover:from-green-700 hover:to-green-600 transition-all duration-200 shadow-lg"
         >
           🚀 Upload {preview.length} Products
         </button>

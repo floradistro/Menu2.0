@@ -219,7 +219,7 @@ export default function StoreProductManager({ storeCode }: StoreProductManagerPr
               store_code: storeCode
             })
           }}
-          className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white font-medium rounded-md hover:from-green-700 hover:to-green-600 transition-all duration-200 shadow-lg"
+          className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-medium rounded-md hover:from-green-700 hover:to-green-600 transition-all duration-200 shadow-lg"
         >
           <span className="mr-2">➕</span>
           Add Product
@@ -242,7 +242,7 @@ export default function StoreProductManager({ storeCode }: StoreProductManagerPr
                   type="text"
                   value={formData.product_name || ''}
                   onChange={(e) => setFormData({ ...formData, product_name: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -254,7 +254,7 @@ export default function StoreProductManager({ storeCode }: StoreProductManagerPr
                 <select
                   value={formData.product_category || ''}
                   onChange={(e) => setFormData({ ...formData, product_category: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 >
                   <option value="">Select category</option>
@@ -274,7 +274,7 @@ export default function StoreProductManager({ storeCode }: StoreProductManagerPr
                   type="text"
                   value={formData.strain_type || ''}
                   onChange={(e) => setFormData({ ...formData, strain_type: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., Indica, Sativa, Hybrid"
                 />
               </div>
@@ -287,7 +287,7 @@ export default function StoreProductManager({ storeCode }: StoreProductManagerPr
                   type="text"
                   value={formData.strength || ''}
                   onChange={(e) => setFormData({ ...formData, strength: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., 10mg, 100mg, 1g"
                 />
               </div>
@@ -301,7 +301,7 @@ export default function StoreProductManager({ storeCode }: StoreProductManagerPr
                   step="0.01"
                   value={formData.thca_percent || ''}
                   onChange={(e) => setFormData({ ...formData, thca_percent: e.target.value ? parseFloat(e.target.value) : undefined })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., 25.5"
                 />
               </div>
@@ -315,7 +315,7 @@ export default function StoreProductManager({ storeCode }: StoreProductManagerPr
                   step="0.01"
                   value={formData.delta9_percent || ''}
                   onChange={(e) => setFormData({ ...formData, delta9_percent: e.target.value ? parseFloat(e.target.value) : undefined })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., 0.3"
                 />
               </div>
@@ -328,7 +328,7 @@ export default function StoreProductManager({ storeCode }: StoreProductManagerPr
               <textarea
                 value={formData.description || ''}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 rows={3}
               />
             </div>
@@ -346,7 +346,7 @@ export default function StoreProductManager({ storeCode }: StoreProductManagerPr
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white font-medium rounded-md hover:from-green-700 hover:to-green-600 transition-all duration-200"
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-medium rounded-md hover:from-green-700 hover:to-green-600 transition-all duration-200"
               >
                 {editingProduct ? 'Update' : 'Create'} Product
               </button>
@@ -365,7 +365,7 @@ export default function StoreProductManager({ storeCode }: StoreProductManagerPr
                   type="checkbox"
                   checked={selectAll}
                   onChange={handleSelectAll}
-                  className="rounded border-gray-600 bg-gray-800 text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
+                  className="rounded border-gray-600 bg-gray-800 text-green-500 focus:ring-blue-500 focus:ring-offset-gray-800"
                 />
               </th>
               <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Product Name</th>
@@ -384,7 +384,7 @@ export default function StoreProductManager({ storeCode }: StoreProductManagerPr
                     type="checkbox"
                     checked={selectedProducts.has(product.id)}
                     onChange={() => handleSelectProduct(product.id)}
-                    className="rounded border-gray-600 bg-gray-800 text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
+                    className="rounded border-gray-600 bg-gray-800 text-green-500 focus:ring-blue-500 focus:ring-offset-gray-800"
                   />
                 </td>
                 <td className="py-3 px-4 text-gray-200">{product.product_name}</td>

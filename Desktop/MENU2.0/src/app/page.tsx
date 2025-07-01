@@ -63,7 +63,7 @@ export default async function Home() {
                   <p className="text-gray-500 text-xs mb-4">{store.address}</p>
                 )}
                 <div className="inline-flex items-center text-green-400 font-medium">
-                  <span>Enter Store Environment</span>
+                  <span>Enter</span>
                   <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
