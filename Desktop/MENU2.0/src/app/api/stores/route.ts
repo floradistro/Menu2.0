@@ -7,7 +7,6 @@ export async function GET() {
     const stores = await getStores(true) // Force refresh
     return NextResponse.json({ stores })
   } catch (error) {
-    console.error('Error fetching stores:', error)
     return NextResponse.json({ error: 'Failed to fetch stores' }, { status: 500 })
   }
 }
@@ -18,7 +17,6 @@ export async function POST() {
     const stores = await getStores(true) // Force refresh after clearing cache
     return NextResponse.json({ stores, message: 'Cache cleared and refreshed' })
   } catch (error) {
-    console.error('Error refreshing stores:', error)
     return NextResponse.json({ error: 'Failed to refresh stores' }, { status: 500 })
   }
 }

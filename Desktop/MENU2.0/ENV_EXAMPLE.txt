@@ -1,0 +1,12 @@
+# MENU 2.0 Environment Variables
+# Copy this content to a .env.local file in the root directory
+
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://cullazwyqnczfbavfkzk.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1bGxhend5cW5jemZiYXZma3prIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzMzE5NTgsImV4cCI6MjA2NjkwNzk1OH0.9bIfBhQgcSBsNf3fUdtveqlmQ4ChMR7UTkn-KXTPsQM
+
+# App Configuration
+NEXT_PUBLIC_APP_NAME=MENU 2.0
+NEXT_PUBLIC_REFRESH_INTERVAL=60000
+
+# Note: Replace the Supabase values above with your own project credentials if deploying a new instance 

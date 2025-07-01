@@ -3,24 +3,9 @@
 import { useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { parseCSV, generateCSVTemplate } from '@/lib/csvParser'
-
-interface ProductRow {
-  store_code: string
-  product_category: string
-  product_name: string
-  strain_type?: string
-  strain_cross?: string
-  description?: string
-  terpene?: string
-  strength?: string
-  thca_percent?: string
-  delta9_percent?: string
-}
-
-interface ValidationError {
-  row: number
-  errors: string[]
-}
+import { ProductRow, ValidationError } from '@/types'
+import { VALID_CATEGORIES, CATEGORY_COLORS } from '@/lib/constants'
+import { parseNumericValue } from '@/lib/utils'
 
 export default function BulkUpload() {
   const [file, setFile] = useState<File | null>(null)
@@ -44,9 +29,8 @@ export default function BulkUpload() {
     if (!row.product_name?.trim()) errors.push('Product name is required')
     
     // Valid categories
-    const validCategories = ['Flower', 'Vape', 'Edible', 'Concentrate', 'Moonwater']
-    if (row.product_category && !validCategories.includes(row.product_category)) {
-      errors.push(`Invalid category. Must be one of: ${validCategories.join(', ')}`)
+    if (row.product_category && !VALID_CATEGORIES.includes(row.product_category as any)) {
+      errors.push(`Invalid category. Must be one of: ${VALID_CATEGORIES.join(', ')}`)
     }
     
     // Category-specific validation
@@ -155,8 +139,8 @@ export default function BulkUpload() {
           description: row.description || null,
           terpene: row.terpene || null,
           strength: row.strength || null,
-          thca_percent: row.thca_percent ? parseFloat(row.thca_percent) : null,
-          delta9_percent: row.delta9_percent ? parseFloat(row.delta9_percent) : null,
+          thca_percent: parseNumericValue(row.thca_percent),
+          delta9_percent: parseNumericValue(row.delta9_percent),
           store_code: row.store_code
         }))
         
@@ -195,14 +179,7 @@ export default function BulkUpload() {
   }
 
   const getCategoryColor = (category: string) => {
-    const colors: Record<string, string> = {
-      'Flower': 'bg-green-500/20 text-green-400 border-green-500/30',
-      'Vape': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-      'Edible': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-      'Concentrate': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-      'Moonwater': 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30'
-    }
-    return colors[category] || 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+    return CATEGORY_COLORS[category] || 'bg-gray-500/20 text-gray-400 border-gray-500/30'
   }
 
   return (

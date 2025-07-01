@@ -43,10 +43,8 @@ export async function getStores(forceRefresh = false): Promise<StoreConfig[]> {
     })) || []
     
     lastFetch = now
-    console.log('Fetched stores from database:', storeCache)
     return storeCache
   } catch (error) {
-    console.error('Error fetching stores:', error)
     
     // Fallback to hardcoded stores if database fails
     const fallbackStores = [

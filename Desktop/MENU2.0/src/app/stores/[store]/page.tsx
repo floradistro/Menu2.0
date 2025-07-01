@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getStores } from '@/lib/stores'
 import { notFound } from 'next/navigation'
+import { CATEGORY_ICONS, CATEGORY_GRADIENTS } from '@/lib/constants'
 
 interface PageProps {
   params: {
@@ -17,13 +18,11 @@ export default async function StorePage({ params }: PageProps) {
     notFound()
   }
 
-  const categories = [
-    { name: 'Flower', icon: '🌸', color: 'from-green-600 to-green-500' },
-    { name: 'Vape', icon: '💨', color: 'from-blue-600 to-blue-500' },
-    { name: 'Edible', icon: '🍬', color: 'from-purple-600 to-purple-500' },
-    { name: 'Concentrate', icon: '💎', color: 'from-yellow-600 to-yellow-500' },
-    { name: 'Moonwater', icon: '🌙', color: 'from-indigo-600 to-indigo-500' }
-  ]
+  const categories = ['Flower', 'Vape', 'Edible', 'Concentrate', 'Moonwater'].map(name => ({
+    name,
+    icon: CATEGORY_ICONS[name],
+    color: CATEGORY_GRADIENTS[name]
+  }))
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
@@ -40,11 +39,11 @@ export default async function StorePage({ params }: PageProps) {
             Back to Store Selection
           </Link>
           
-          <h1 className="text-5xl font-light tracking-wider text-gray-100 mb-4">
+          <h1 className="text-5xl font-light tracking-wider text-gray-100 mb-4 font-sf-pro-display">
             {store.name}
           </h1>
           <div className="w-24 h-px bg-gradient-to-r from-transparent via-gray-500 to-transparent mx-auto mb-6"></div>
-          <p className="text-lg text-gray-300 font-light">
+          <p className="text-lg text-gray-300 font-light font-sf-pro-display">
             Store Code: {store.code} • Live Inventory System
           </p>
         </div>
@@ -61,7 +60,7 @@ export default async function StorePage({ params }: PageProps) {
         </div>
         
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-light text-gray-200 mb-8 text-center">Browse Categories</h2>
+          <h2 className="text-2xl font-light text-gray-200 mb-8 text-center font-sf-pro-display">Browse Categories</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((category) => (

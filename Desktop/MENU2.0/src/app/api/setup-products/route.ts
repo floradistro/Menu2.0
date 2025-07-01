@@ -3,8 +3,6 @@ import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('Setting up products table with RLS policies...')
-
     // First, let's check if the products table exists
     const { data: tableCheck, error: tableError } = await supabase
       .from('products')
@@ -12,7 +10,6 @@ export async function POST(request: NextRequest) {
       .limit(1)
 
     if (tableError) {
-      console.log('Table check error:', tableError)
       return NextResponse.json({
         success: false,
         message: 'Products table not accessible',
@@ -82,7 +79,6 @@ export async function POST(request: NextRequest) {
       .select()
 
     if (insertError) {
-      console.log('Insert error:', insertError)
       return NextResponse.json({
         success: false,
         message: 'Failed to insert sample data',
@@ -99,7 +95,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Setup error:', error)
     return NextResponse.json({
       success: false,
       message: 'Setup failed',

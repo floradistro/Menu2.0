@@ -11,7 +11,7 @@ export default function AdminPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-light text-gray-100 mb-8">Admin Dashboard</h1>
+        <h1 className="text-4xl font-light text-gray-100 mb-8 font-sf-pro-display">Admin Dashboard</h1>
         
         <div className="mb-6">
           <div className="border-b border-gray-700">

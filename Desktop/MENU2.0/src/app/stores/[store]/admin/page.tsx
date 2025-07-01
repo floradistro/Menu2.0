@@ -24,7 +24,7 @@ export default function StoreAdminPage() {
               </svg>
               Back to Store Dashboard
             </Link>
-            <h1 className="text-4xl font-light text-gray-100">
+            <h1 className="text-4xl font-light text-gray-100 font-sf-pro-display">
               {storeCode} Admin Dashboard
             </h1>
             <p className="text-gray-400 mt-2">

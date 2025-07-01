@@ -1,7 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase, Product } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
+import { Product } from '@/types'
+import { FormInput } from '@/components/ui/FormInput'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { VALID_CATEGORIES } from '@/lib/constants'
+import { parseNumericValue } from '@/lib/utils'
 
 export default function ProductManager() {
   const [products, setProducts] = useState<Product[]>([])
@@ -38,7 +43,7 @@ export default function ProductManager() {
       if (error) throw error
       setProducts(data || [])
     } catch (error) {
-      console.error('Error fetching products:', error)
+      // Error handled above
     } finally {
       setLoading(false)
     }
@@ -88,7 +93,6 @@ export default function ProductManager() {
       })
       fetchProducts()
     } catch (error) {
-      console.error('Error saving product:', error)
       alert('Error saving product. Please try again.')
     }
   }
@@ -124,7 +128,6 @@ export default function ProductManager() {
       if (error) throw error
       fetchProducts()
     } catch (error) {
-      console.error('Error deleting product:', error)
       alert('Error deleting product. Please try again.')
     }
   }

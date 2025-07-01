@@ -1,16 +1,12 @@
 import MenuGrid from '@/components/MenuGrid'
 import { getStoreMapping } from '@/lib/stores'
+import { formatCategory } from '@/lib/utils'
 
 interface PageProps {
   params: {
     store: string
     category: string
   }
-}
-
-// Properly format category names
-const formatCategory = (category: string): string => {
-  return category.charAt(0).toUpperCase() + category.slice(1)
 }
 
 export default async function MenuPage({ params }: PageProps) {
@@ -25,7 +21,7 @@ export default async function MenuPage({ params }: PageProps) {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-light tracking-wide text-gray-100">
+              <h1 className="text-3xl font-light tracking-wide text-gray-100 font-sf-pro-display">
                 {storeName} - {category}
               </h1>
               <p className="text-sm text-gray-400 mt-1">

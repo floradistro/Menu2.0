@@ -22,17 +22,17 @@ export default async function Home() {
         </div>
 
         <div className="text-center mb-16">
-          <h1 className="text-6xl font-light tracking-wider text-gray-100 mb-4">
+          <h1 className="text-6xl font-light tracking-wider text-gray-100 mb-4 font-sf-pro-display">
             CANNABIS MENU
           </h1>
           <div className="w-24 h-px bg-gradient-to-r from-transparent via-gray-500 to-transparent mx-auto mb-8"></div>
-          <p className="text-xl text-gray-300 font-light tracking-wide">
+          <p className="text-xl text-gray-300 font-light tracking-wide font-sf-pro-display">
             Multi-Store Live Inventory System
           </p>
         </div>
         
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-light text-gray-200 mb-12 text-center">Select Your Store</h2>
+          <h2 className="text-3xl font-light text-gray-200 mb-12 text-center font-sf-pro-display">Select Your Store</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {stores.map((store) => (
@@ -44,7 +44,7 @@ export default async function Home() {
                 <div className="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">
                   🏪
                 </div>
-                <h3 className="text-2xl font-medium text-gray-200 group-hover:text-gray-100 mb-3">
+                <h3 className="text-2xl font-medium text-gray-200 group-hover:text-gray-100 mb-3 font-sf-pro-display">
                   {store.name}
                 </h3>
                 <p className="text-gray-400 text-sm mb-4">Store Code: {store.code}</p>

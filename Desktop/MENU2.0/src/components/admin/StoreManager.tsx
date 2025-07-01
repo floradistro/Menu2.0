@@ -36,15 +36,13 @@ export default function StoreManager() {
         if (error.code === '42P01') {
           // Table doesn't exist
           setTableExists(false)
-        } else {
-          console.error('Error fetching stores:', error)
         }
       } else {
         setStores(data || [])
         setTableExists(true)
       }
     } catch (error) {
-      console.error('Error fetching stores:', error)
+      // Error handled above
     } finally {
       setLoading(false)
     }
@@ -94,12 +92,10 @@ export default function StoreManager() {
       // Force refresh the cache via API call
       try {
         await fetch('/api/stores', { method: 'POST' })
-        console.log('Store cache refreshed successfully')
       } catch (refreshError) {
-        console.warn('Failed to refresh store cache:', refreshError)
+        // Silently fail cache refresh
       }
     } catch (error) {
-      console.error('Error saving store:', error)
       alert(editingStore ? 'Error updating store.' : 'Error adding store. Code may already exist.')
     }
   }
@@ -139,12 +135,10 @@ export default function StoreManager() {
       // Force refresh the cache via API call
       try {
         await fetch('/api/stores', { method: 'POST' })
-        console.log('Store cache refreshed after deletion')
       } catch (refreshError) {
-        console.warn('Failed to refresh store cache after deletion:', refreshError)
+        // Silently fail cache refresh
       }
     } catch (error) {
-      console.error('Error deleting store:', error)
       alert('Error deleting store. There may be associated data.')
     }
   }

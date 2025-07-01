@@ -2,16 +2,13 @@ import MenuGrid from '@/components/MenuGrid'
 import { getStores } from '@/lib/stores'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { formatCategory } from '@/lib/utils'
 
 interface PageProps {
   params: {
     store: string
     category: string
   }
-}
-
-const formatCategory = (category: string): string => {
-  return category.charAt(0).toUpperCase() + category.slice(1)
 }
 
 export default async function StoreMenuPage({ params }: PageProps) {
@@ -39,7 +36,7 @@ export default async function StoreMenuPage({ params }: PageProps) {
                 </svg>
                 Back to {store.name}
               </Link>
-              <h1 className="text-3xl font-light tracking-wide text-gray-100">
+              <h1 className="text-3xl font-light tracking-wide text-gray-100 font-sf-pro-display">
                 {store.name} - {category}
               </h1>
               <p className="text-sm text-gray-400 mt-1">

@@ -8,10 +8,10 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["cannabis", "menu", "nextjs", "supabase", "luxury", "digital-menu"],
+  "author": "Cannabis Menu Systems",
   "license": "ISC",
-  "description": "",
+  "description": "Luxury digital menu system for cannabis dispensaries with multi-store support",
   "dependencies": {
     "@supabase/supabase-js": "^2.50.2",
     "@types/papaparse": "^5.3.16",
