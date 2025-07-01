@@ -38,7 +38,7 @@ export default async function Home() {
           </h1>
           <div className="w-24 h-px bg-gradient-to-r from-transparent via-gray-500 to-transparent mx-auto mb-8"></div>
           <p className="text-xl text-gray-300 font-light tracking-wide font-sf-pro-display">
-            Multi-Store Live Inventory System
+            by fahad and darion
           </p>
         </div>
         
