@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { getStores } from '@/lib/stores'
 import { notFound } from 'next/navigation'
 import { CATEGORY_ICONS, CATEGORY_GRADIENTS } from '@/lib/constants'
@@ -38,6 +39,16 @@ export default async function StorePage({ params }: PageProps) {
             </svg>
             Back to Store Selection
           </Link>
+          
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/logo.png"
+              alt="Cannabis Menu Logo"
+              width={100}
+              height={100}
+              className="w-25 h-25 object-contain"
+            />
+          </div>
           
           <h1 className="text-5xl font-light tracking-wider text-gray-100 mb-4 font-sf-pro-display">
             {store.name}

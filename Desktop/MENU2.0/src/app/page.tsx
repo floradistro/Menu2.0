@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { getStores } from '@/lib/stores'
 
 // Force revalidation every 30 seconds
@@ -22,6 +23,16 @@ export default async function Home() {
         </div>
 
         <div className="text-center mb-16">
+          <div className="flex justify-center mb-8">
+            <Image
+              src="/logo.png"
+              alt="Cannabis Menu Logo"
+              width={120}
+              height={120}
+              className="w-30 h-30 object-contain"
+            />
+          </div>
+          
           <h1 className="text-6xl font-light tracking-wider text-gray-100 mb-4 font-sf-pro-display">
             CANNABIS MENU
           </h1>

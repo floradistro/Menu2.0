@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import StoreProductManager from '@/components/admin/StoreProductManager'
 
@@ -24,12 +25,23 @@ export default function StoreAdminPage() {
               </svg>
               Back to Store Dashboard
             </Link>
-            <h1 className="text-4xl font-light text-gray-100 font-sf-pro-display">
-              {storeCode} Admin Dashboard
-            </h1>
-            <p className="text-gray-400 mt-2">
-              Manage products for store {storeCode}
-            </p>
+            <div className="flex items-center gap-4">
+              <Image
+                src="/logo.png"
+                alt="Cannabis Menu Logo"
+                width={60}
+                height={60}
+                className="w-15 h-15 object-contain"
+              />
+              <div>
+                <h1 className="text-4xl font-light text-gray-100 font-sf-pro-display">
+                  {storeCode} Admin Dashboard
+                </h1>
+                <p className="text-gray-400 mt-2">
+                  Manage products for store {storeCode}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
         

@@ -2,6 +2,7 @@ import MenuGrid from '@/components/MenuGrid'
 import { getStores } from '@/lib/stores'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { formatCategory } from '@/lib/utils'
 
 interface PageProps {
@@ -26,7 +27,14 @@ export default async function StoreMenuPage({ params }: PageProps) {
       <div className="border-b border-gray-700/50 bg-gray-900/50 backdrop-blur-sm">
         <div className="w-full px-3 py-3">
           <div className="flex items-center justify-between">
-            <div>
+            <div className="flex items-center gap-6">
+              <Image
+                src="/logo.png"
+                alt="Cannabis Menu Logo"
+                width={80}
+                height={80}
+                className="w-20 h-20 object-contain"
+              />
               <h1 className="text-7xl font-normal tracking-wide text-gray-100 lowercase" style={{ fontFamily: 'SF Pro Display, -apple-system, BlinkMacSystemFont, sans-serif' }}>
                 {category} menu
               </h1>

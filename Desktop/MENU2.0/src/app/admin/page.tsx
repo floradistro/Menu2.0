@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import ProductManager from '@/components/admin/ProductManager'
 import StoreManager from '@/components/admin/StoreManager'
 import BulkUpload from '@/components/admin/BulkUpload'
@@ -12,7 +13,16 @@ export default function AdminPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-light text-gray-100 mb-8 font-sf-pro-display">Admin Dashboard</h1>
+        <div className="flex items-center gap-4 mb-8">
+          <Image
+            src="/logo.png"
+            alt="Cannabis Menu Logo"
+            width={60}
+            height={60}
+            className="w-15 h-15 object-contain"
+          />
+          <h1 className="text-4xl font-light text-gray-100 font-sf-pro-display">Admin Dashboard</h1>
+        </div>
         
         <div className="mb-6">
           <div className="border-b border-gray-700">
