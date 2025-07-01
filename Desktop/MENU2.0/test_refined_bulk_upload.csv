@@ -1,0 +1,14 @@
+store_code,category,product_name,strain_name,strain_type,base_description,variant_label,strength_mg,thca_pct,delta9_pct,sale_price_1_unit,sale_price_1g,sale_price_3_5g,sale_price_7g,sale_price_14g,sale_price_28g,sale_price_2_units,sale_price_3_units,sale_price_4_units,qty_on_hand,low_stock_threshold,sku,flavor_name,special_price,special_starts,special_ends
+CLT,Flower,Purple Haze,Purple Haze,Sativa,Classic energizing sativa,,,25.5,0.005,,15.00,42.00,80.00,150.00,280.00,,,,,30,5,PH,,35.00,2024-01-01,2024-01-15
+CLT,Flower,Gorilla Glue,Gorilla Glue,Hybrid,Heavy hitting hybrid,,,28.2,0.008,,,38.00,70.00,130.00,,,,,,25,5,GG,,,,,
+SAL,Flower,Purple Haze,Purple Haze,Sativa,Classic energizing sativa,,,25.5,0.005,,14.00,40.00,75.00,,,,,,,20,5,PH,,,,,
+CLT,Vape,Strawberry Cough Cart,Strawberry Cough,Sativa,Sweet strawberry flavor,1g,1000,82.0,0.09,50.00,,,,,,,,,,15,5,SC-1G,,,,,
+CLT,Vape,Blue Dream Pod,Blue Dream,Hybrid,Smooth and balanced,0.5g,500,78.5,0.08,35.00,,,,,,,,,,20,5,BD-05G,,,,,
+CLT,Edible,Sour Gummies,,,Tangy sour flavors,10mg,10,,,12.00,,,,,,20.00,28.00,48.00,,40,10,SG-10,Sour Apple,,,,
+CLT,Edible,Chocolate Bar,,,Premium dark chocolate,100mg,100,,,25.00,,,,,,,,,,,20,5,CB-100,,,,,
+SAL,Edible,Sour Gummies,,,Tangy sour flavors,20mg,20,,,18.00,,,,,,32.00,,,,,50,10,SG-20,Sour Apple,,,,
+CLT,Concentrate,Purple Haze Wax,Purple Haze,Sativa,Premium wax concentrate,1g,,78.5,0.15,65.00,,,,,,,,,,10,3,PHW-1G,,55.00,2024-01-01,2024-01-10
+CLT,Concentrate,Gorilla Glue Shatter,Gorilla Glue,Hybrid,Glass-like consistency,0.5g,,82.3,0.18,40.00,,,,,,,,,,8,3,GGS-05G,,,,,
+CLT,Moonwater,Moonwater Bliss,,,Cannabis-infused sparkling water,5mg,5,,,8.00,,,,,,,,28.00,,60,15,MW-5,Watermelon,,,,
+CLT,Moonwater,Moonwater Zen,,,Relaxing beverage,10mg,10,,,12.00,,,,,,,,45.00,,40,10,MW-10,Lemon Lime,,,,
+SAL,Moonwater,Moonwater Bliss,,,Cannabis-infused sparkling water,5mg,5,,,7.50,,,,,,,,26.00,,55,15,MW-5,Watermelon,,,, 
