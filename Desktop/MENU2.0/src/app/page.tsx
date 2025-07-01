@@ -8,6 +8,16 @@ export const revalidate = 30
 export default async function Home() {
   const stores = await getStores(true) // Force fresh data
 
+  // Get custom icon for each store
+  const getStoreIcon = (storeName: string) => {
+    const name = storeName.toLowerCase()
+    if (name.includes('blowing rock')) return '🏔️'
+    if (name.includes('charlotte')) return '🏙️'
+    if (name.includes('salisbury')) return '🗑️'
+    if (name.includes('tennessee')) return '🚜'
+    return '🏪' // Default icon
+  }
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
       <div className="container mx-auto px-4 py-16">
@@ -53,7 +63,7 @@ export default async function Home() {
                 className="group bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-700/50 p-8 hover:border-gray-600 hover:bg-gray-700/50 transition-all duration-300 text-center transform hover:scale-105"
               >
                 <div className="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                  🏪
+                  {getStoreIcon(store.name)}
                 </div>
                 <h3 className="text-2xl font-medium text-gray-200 group-hover:text-gray-100 mb-3 font-sf-pro-display">
                   {store.name}
