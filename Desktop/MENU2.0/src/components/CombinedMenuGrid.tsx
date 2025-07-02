@@ -22,6 +22,7 @@ import { ErrorMessage } from './ui/ErrorMessage'
 interface CombinedMenuGridProps {
   storeCode: string
   adminMode?: boolean
+  concentrateOnly?: boolean
 }
 
 // Apple-style smooth text display component
@@ -64,7 +65,7 @@ function SmoothTextDisplay({ text }: SmoothTextDisplayProps) {
   )
 }
 
-export default function CombinedMenuGrid({ storeCode, adminMode = false }: CombinedMenuGridProps) {
+export default function CombinedMenuGrid({ storeCode, adminMode = false, concentrateOnly = false }: CombinedMenuGridProps) {
   const [vapeProducts, setVapeProducts] = useState<Product[]>([])
   const [concentrateProducts, setConcentrateProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -77,15 +78,18 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false }: Combi
     try {
       setLoading(true)
       
-      // Fetch vape products
-      const { data: vapeData, error: vapeError } = await supabase
-        .from('products')
-        .select('*')
-        .eq('store_code', storeCode.toUpperCase())
-        .eq('product_category', 'Vape')
-        .order('product_name')
+      if (!concentrateOnly) {
+        // Fetch vape products
+        const { data: vapeData, error: vapeError } = await supabase
+          .from('products')
+          .select('*')
+          .eq('store_code', storeCode.toUpperCase())
+          .eq('product_category', 'Vape')
+          .order('product_name')
 
-      if (vapeError) throw vapeError
+        if (vapeError) throw vapeError
+        setVapeProducts(vapeData || [])
+      }
 
       // Fetch concentrate products
       const { data: concentrateData, error: concentrateError } = await supabase
@@ -96,8 +100,6 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false }: Combi
         .order('product_name')
 
       if (concentrateError) throw concentrateError
-
-      setVapeProducts(vapeData || [])
       setConcentrateProducts(concentrateData || [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch products')
@@ -161,14 +163,18 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false }: Combi
   }, [storeCode, adminMode])
 
   if (loading) {
-    return <LoadingSpinner message="Loading vape & concentrate menu..." />
+    return <LoadingSpinner message={concentrateOnly ? "Loading concentrate menu..." : "Loading vape & concentrate menu..."} />
   }
 
   if (error) {
     return <ErrorMessage error={error} />
   }
 
-  if (vapeProducts.length === 0 && concentrateProducts.length === 0) {
+  if (concentrateOnly && concentrateProducts.length === 0) {
+    return <LoadingSpinner message="No concentrate products available" />
+  }
+
+  if (!concentrateOnly && vapeProducts.length === 0 && concentrateProducts.length === 0) {
     return <LoadingSpinner message="No vape or concentrate products available" />
   }
 
@@ -222,7 +228,7 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false }: Combi
               className="text-left py-3 px-3 text-lg font-medium w-1/5"
               style={{ color: colors.primary_text_color }}
             >
-              Strength
+              Type
             </th>
             
             <th 
@@ -268,14 +274,6 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false }: Combi
                     )}
                   </div>
                 </div>
-                <div 
-                  className="flex items-center text-lg opacity-80"
-                  style={{ color: colors.primary_text_color }}
-                >
-                  {product.terpene && <span>{product.terpene}</span>}
-                  {product.description && product.terpene && <span className="mx-1">•</span>}
-                  {product.description && <span>{product.description}</span>}
-                </div>
               </td>
 
               <td className="py-2 px-3 text-left">
@@ -283,7 +281,7 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false }: Combi
                   className="text-2xl font-semibold"
                   style={{ color: colors.primary_text_color }}
                 >
-                  {product.strength || '-'}
+                  {product.strain_type || '-'}
                 </span>
               </td>
               
@@ -305,7 +303,7 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false }: Combi
                       )}
                     </>
                   ) : (
-                    // For concentrate products: show both THCA and Delta-9
+                    // For concentrate products: only show THCA, not Delta-9
                     <>
                       {product.thca_percent && (
                         <span 
@@ -315,15 +313,7 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false }: Combi
                           {product.thca_percent}%
                         </span>
                       )}
-                      {product.delta9_percent && (
-                        <span 
-                          className="text-xl font-bold"
-                          style={{ color: colors.delta9_percent_color }}
-                        >
-                          Δ9 {product.delta9_percent}%
-                        </span>
-                      )}
-                      {!product.thca_percent && !product.delta9_percent && (
+                      {!product.thca_percent && (
                         <span style={{ color: colors.secondary_text_color }}>-</span>
                       )}
                     </>
@@ -340,39 +330,35 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false }: Combi
   const renderCategorySection = (
     products: Product[], 
     categoryName: string, 
-    categoryIcon: string,
     isVape: boolean = false
   ) => {
     if (products.length === 0) return null
-
-    const groupedProducts = isVape ? groupVapeProducts(products) : groupConcentrateProducts(products)
+    
+    // Get section configuration like flower menus do
+    const config = getSectionConfig(categoryName, colors)
     
     return (
-      <div className="mb-8">
-        {/* Category Header */}
+      <div className="w-full">
+        {/* Section Header with flower menu styling */}
         <div 
-          className={`px-6 py-6 border-b-2 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}
+          className={`px-6 py-5 border-b ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}
           style={{
-            background: isVape 
-              ? 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)' 
-              : 'linear-gradient(135deg, #ea580c 0%, #f59e0b 100%)',
-            borderColor: colors.table_border_color + '80'
+            ...getSectionHeaderStyle(config.color, colors.header_blur_effect),
+            borderColor: colors.table_border_color + '50'
           }}
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <span className="text-4xl">{categoryIcon}</span>
-              <h1 
-                className="text-4xl font-bold tracking-wider font-sf-pro-display drop-shadow-2xl"
-                style={{ color: '#ffffff' }}
-              >
-                {categoryName.toUpperCase()}
-              </h1>
-            </div>
+            <h2 
+              className="text-3xl font-bold tracking-wider font-sf-pro-display drop-shadow-2xl"
+              style={{ color: config.textColor }}
+            >
+              {categoryName.toUpperCase()}
+            </h2>
             <div 
-              className="text-sm font-medium drop-shadow-lg px-4 py-2 rounded-full bg-white/20"
+              className="text-sm font-medium drop-shadow-lg px-3 py-1 rounded-full"
               style={{ 
-                color: '#ffffff',
+                backgroundColor: colors.product_count_bg + '20',
+                color: colors.product_count_text,
                 backdropFilter: colors.header_blur_effect ? 'blur(8px)' : 'none'
               }}
             >
@@ -380,48 +366,11 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false }: Combi
             </div>
           </div>
         </div>
-
-        {/* Strain Type Sections */}
-        {Object.entries(groupedProducts).map(([strainType, strainProducts]) => {
-          const config = getSectionConfig(strainType, colors)
-          
-          return (
-            <div key={`${categoryName}-${strainType}`} className="w-full">
-              {/* Strain Type Header */}
-              <div 
-                className={`px-6 py-4 border-b ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}
-                style={{
-                  ...getSectionHeaderStyle(config.color, colors.header_blur_effect),
-                  borderColor: colors.table_border_color + '50'
-                }}
-              >
-                <div className="flex items-center justify-between">
-                  <h2 
-                    className="text-2xl font-bold tracking-wider font-sf-pro-display drop-shadow-2xl"
-                    style={{ color: config.textColor }}
-                  >
-                    {strainType.toUpperCase()}
-                  </h2>
-                  <div 
-                    className="text-xs font-medium drop-shadow-lg px-3 py-1 rounded-full"
-                    style={{ 
-                      backgroundColor: colors.product_count_bg + '20',
-                      color: colors.product_count_text,
-                      backdropFilter: colors.header_blur_effect ? 'blur(8px)' : 'none'
-                    }}
-                  >
-                    {strainProducts.length} {strainProducts.length === 1 ? 'strain' : 'strains'}
-                  </div>
-                </div>
-              </div>
-              
-              {/* Products Table */}
-              <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
-                {renderProductTable(strainProducts, isVape)}
-              </div>
-            </div>
-          )
-        })}
+        
+        {/* Products Table */}
+        <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
+          {renderProductTable(products, isVape)}
+        </div>
       </div>
     )
   }
@@ -436,11 +385,26 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false }: Combi
       className="w-full space-y-0 min-h-screen hide-scrollbar"
       style={backgroundStyle}
     >
-      {/* Vape Section */}
-      {renderCategorySection(vapeProducts, 'Vape', '💨', true)}
-      
-      {/* Concentrate Section */}
-      {renderCategorySection(concentrateProducts, 'Concentrate', '💎', false)}
+      {concentrateOnly ? (
+        // Concentrate only page - No header since it's in the page header
+        concentrateProducts.length > 0 && (
+          <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
+            {renderProductTable(concentrateProducts, false)}
+          </div>
+        )
+      ) : (
+        <>
+          {/* Vape Section - No header since it's in the page header */}
+          {vapeProducts.length > 0 && (
+            <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
+              {renderProductTable(vapeProducts, true)}
+            </div>
+          )}
+          
+          {/* Concentrate Section - With header */}
+          {renderCategorySection(concentrateProducts, 'Concentrate', false)}
+        </>
+      )}
     </div>
   )
 } 
