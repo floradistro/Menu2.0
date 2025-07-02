@@ -511,7 +511,7 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false, concent
         
         {/* Products Table */}
         <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
-          {renderProductTable(products, isVape)}
+          {isVape ? renderVapeTable(products) : renderConcentrateTable(products)}
         </div>
       </div>
     )
