@@ -67,6 +67,8 @@ function SmoothTextDisplay({ text }: SmoothTextDisplayProps) {
 
 export default function MenuGrid({ storeCode, category, adminMode = false }: MenuGridProps) {
   const [products, setProducts] = useState<Product[]>([])
+  const [edibleProducts, setEdibleProducts] = useState<Product[]>([])
+  const [moonwaterProducts, setMoonwaterProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [colors, setColors] = useState<MenuColors>(defaultColors)
@@ -76,20 +78,50 @@ export default function MenuGrid({ storeCode, category, adminMode = false }: Men
   const isFlowerCategory = formatCategory(category) === 'Flower'
   const isVapeCategory = formatCategory(category) === 'Vape'
   const isEdibleCategory = formatCategory(category) === 'Edible'
+  const isCombinedEdibleMenu = isEdibleCategory // Edible category shows both edibles and moonwater
   const isFlowerOrVape = isFlowerCategory || isVapeCategory
 
   const fetchProducts = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('store_code', storeCode.toUpperCase())
-        .eq('product_category', formatCategory(category))
-        .order('product_name')
+      
+      if (isCombinedEdibleMenu) {
+        // Fetch both edibles and moonwater for combined menu
+        const [edibleResponse, moonwaterResponse] = await Promise.all([
+          supabase
+            .from('products')
+            .select('*')
+            .eq('store_code', storeCode.toUpperCase())
+            .eq('product_category', 'Edible')
+            .order('product_name'),
+          supabase
+            .from('products')
+            .select('*')
+            .eq('store_code', storeCode.toUpperCase())
+            .eq('product_category', 'Moonwater')
+            .order('product_name')
+        ])
 
-      if (error) throw error
-      setProducts(data || [])
+        if (edibleResponse.error) throw edibleResponse.error
+        if (moonwaterResponse.error) throw moonwaterResponse.error
+        
+        setEdibleProducts(edibleResponse.data || [])
+        setMoonwaterProducts(moonwaterResponse.data || [])
+        setProducts([]) // Clear regular products for combined view
+      } else {
+        // Regular single category fetch
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('store_code', storeCode.toUpperCase())
+          .eq('product_category', formatCategory(category))
+          .order('product_name')
+
+        if (error) throw error
+        setProducts(data || [])
+        setEdibleProducts([])
+        setMoonwaterProducts([])
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch products')
     } finally {
@@ -159,7 +191,11 @@ export default function MenuGrid({ storeCode, category, adminMode = false }: Men
     return <ErrorMessage error={error} />
   }
 
-  if (products.length === 0) {
+  if (isCombinedEdibleMenu && edibleProducts.length === 0 && moonwaterProducts.length === 0) {
+    return <LoadingSpinner message="No edible or moonwater products available" />
+  }
+  
+  if (!isCombinedEdibleMenu && products.length === 0) {
     return <LoadingSpinner message="No products available" />
   }
 
@@ -174,7 +210,7 @@ export default function MenuGrid({ storeCode, category, adminMode = false }: Men
   }, {} as Record<string, Product[]>)
 
   const renderProductTable = (products: Product[]) => {
-    // Special handling for edibles - only show Product, Description, and Strength
+    // Special handling for edibles - only show Product and Strength
     if (isEdibleCategory) {
       return (
         <table className="w-full">
@@ -187,19 +223,13 @@ export default function MenuGrid({ storeCode, category, adminMode = false }: Men
           >
             <tr>
               <th 
-                className="text-left py-3 px-4 text-lg font-semibold w-2/5"
+                className="text-left py-3 px-4 text-lg font-semibold w-3/5"
                 style={{ color: colors.primary_text_color }}
               >
                 Product
               </th>
               <th 
                 className="text-left py-3 px-3 text-lg font-medium w-2/5"
-                style={{ color: colors.primary_text_color }}
-              >
-                Description
-              </th>
-              <th 
-                className="text-left py-3 px-3 text-lg font-medium w-1/5"
                 style={{ color: colors.primary_text_color }}
               >
                 Strength
@@ -228,13 +258,68 @@ export default function MenuGrid({ storeCode, category, adminMode = false }: Men
                     {product.product_name}
                   </div>
                 </td>
-                <td className="py-2 px-3">
+                <td className="py-2 px-3 text-left">
                   <span 
-                    className="text-lg"
+                    className="text-2xl font-semibold"
                     style={{ color: colors.primary_text_color }}
                   >
-                    {product.description || '-'}
+                    {product.strength || '-'}
                   </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )
+    }
+
+    // Special handling for moonwater - only show Product and Strength
+    if (products.some(p => p.product_category === 'Moonwater')) {
+      return (
+        <table className="w-full">
+          <thead 
+            className="border-b"
+            style={{ 
+              backgroundColor: colors.table_header_bg,
+              borderColor: colors.table_border_color 
+            }}
+          >
+            <tr>
+              <th 
+                className="text-left py-3 px-4 text-lg font-semibold w-3/5"
+                style={{ color: colors.primary_text_color }}
+              >
+                Product
+              </th>
+              <th 
+                className="text-left py-3 px-3 text-lg font-medium w-2/5"
+                style={{ color: colors.primary_text_color }}
+              >
+                Strength
+              </th>
+            </tr>
+          </thead>
+          <tbody className={getTableBorderStyle(colors)} style={{ borderColor: colors.table_border_color }}>
+            {products.map((product, index) => (
+              <tr 
+                key={product.id} 
+                className="transition-all duration-200"
+                style={{
+                  ...(hoveredRowIndex === index 
+                    ? getHoverRowStyle(colors)
+                    : getAlternatingRowStyle(index, colors)),
+                  ...getRowBorderStyle(colors)
+                }}
+                onMouseEnter={() => setHoveredRowIndex(index)}
+                onMouseLeave={() => setHoveredRowIndex(null)}
+              >
+                <td className="py-2 px-4">
+                  <div 
+                    className="text-3xl font-medium"
+                    style={{ color: colors.primary_text_color }}
+                  >
+                    {product.product_name?.replace(/moonwater\s*/gi, '') || '-'}
+                  </div>
                 </td>
                 <td className="py-2 px-3 text-left">
                   <span 
@@ -402,62 +487,199 @@ export default function MenuGrid({ storeCode, category, adminMode = false }: Men
     ? getBackgroundStyle(colors.main_background_gradient)
     : getBackgroundStyle(colors.main_background_color)
 
+
+  // Render section for edibles
+  const renderEdibleSection = (products: Product[]) => {
+    if (products.length === 0) return null
+    
+    const config = getSectionConfig('Edible', colors)
+    
+    return (
+      <div className="w-full">
+        {/* Edible Section Header */}
+        <div 
+          className={`px-6 py-5 border-b ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}
+          style={{
+            ...getSectionHeaderStyle(config.color, colors.header_blur_effect),
+            borderColor: colors.table_border_color + '50'
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <h2 
+                className="text-3xl font-bold tracking-wider font-sf-pro-display drop-shadow-2xl"
+                style={{ color: config.textColor }}
+              >
+                EDIBLE
+              </h2>
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-medium" style={{ color: colors.primary_text_color }}>1</span>
+                  <span className="text-4xl font-bold" style={{ color: '#22c55e' }}>$29.99</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-medium" style={{ color: colors.primary_text_color }}>2</span>
+                  <span className="text-4xl font-bold" style={{ color: '#22c55e' }}>$49.99</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-medium" style={{ color: colors.primary_text_color }}>3</span>
+                  <span className="text-4xl font-bold" style={{ color: '#22c55e' }}>$64.99</span>
+                </div>
+              </div>
+            </div>
+            <div 
+              className="text-sm font-medium drop-shadow-lg px-3 py-1 rounded-full"
+              style={{ 
+                backgroundColor: colors.product_count_bg + '20',
+                color: colors.product_count_text,
+                backdropFilter: colors.header_blur_effect ? 'blur(8px)' : 'none'
+              }}
+            >
+              {products.length} {products.length === 1 ? 'product' : 'products'}
+            </div>
+          </div>
+        </div>
+        
+        {/* Edible Products Table */}
+        <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
+          {renderProductTable(products)}
+        </div>
+      </div>
+    )
+  }
+
+  // Render section for moonwater
+  const renderMoonwaterSection = (products: Product[]) => {
+    if (products.length === 0) return null
+    
+    const config = getSectionConfig('Moonwater', colors)
+    
+    return (
+      <div className="w-full">
+        {/* Moonwater Section Header */}
+        <div 
+          className={`px-6 py-5 border-b ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}
+          style={{
+            ...getSectionHeaderStyle(config.color, colors.header_blur_effect),
+            borderColor: colors.table_border_color + '50'
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <h2 
+                className="text-3xl font-bold tracking-wider font-sf-pro-display drop-shadow-2xl"
+                style={{ color: config.textColor }}
+              >
+                MOONWATER
+              </h2>
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-medium" style={{ color: colors.primary_text_color }}>5mg</span>
+                  <span className="text-4xl font-bold" style={{ color: '#22c55e' }}>$4.99</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-medium" style={{ color: colors.primary_text_color }}>10mg</span>
+                  <span className="text-4xl font-bold" style={{ color: '#22c55e' }}>$7.99</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-medium" style={{ color: colors.primary_text_color }}>30mg</span>
+                  <span className="text-4xl font-bold" style={{ color: '#22c55e' }}>$8.99</span>
+                </div>
+              </div>
+            </div>
+            <div 
+              className="text-sm font-medium drop-shadow-lg px-3 py-1 rounded-full"
+              style={{ 
+                backgroundColor: colors.product_count_bg + '20',
+                color: colors.product_count_text,
+                backdropFilter: colors.header_blur_effect ? 'blur(8px)' : 'none'
+              }}
+            >
+              {products.length} {products.length === 1 ? 'product' : 'products'}
+            </div>
+          </div>
+        </div>
+        
+        {/* Moonwater Products Table */}
+        <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
+          {renderProductTable(products.map(p => ({ ...p, product_category: 'Moonwater' })))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div 
       className="w-full space-y-0 min-h-screen hide-scrollbar"
       style={backgroundStyle}
     >
-      {Object.entries(groupedProducts).map(([strainType, products]) => {
-        const config = getSectionConfig(strainType, colors)
-        
-        // Get appropriate terminology for product count based on category
-        const getProductTerminology = () => {
-          if (isEdibleCategory) {
-            return products.length === 1 ? 'product' : 'products'
-          } else if (isFlowerCategory || isVapeCategory) {
-            return products.length === 1 ? 'strain' : 'strains'
-          } else {
-            return products.length === 1 ? 'product' : 'products'
+      {isCombinedEdibleMenu ? (
+        <>
+          {/* Edibles Section */}
+          {renderEdibleSection(edibleProducts)}
+          
+          {/* Spacing between sections */}
+          {edibleProducts.length > 0 && moonwaterProducts.length > 0 && (
+            <div className="h-8"></div>
+          )}
+          
+          {/* Moonwater Section */}
+          {renderMoonwaterSection(moonwaterProducts)}
+        </>
+      ) : (
+        /* Regular menu with strain type grouping */
+        Object.entries(groupedProducts).map(([strainType, products]) => {
+          const config = getSectionConfig(strainType, colors)
+          
+          // Get appropriate terminology for product count based on category
+          const getProductTerminology = () => {
+            if (isEdibleCategory) {
+              return products.length === 1 ? 'product' : 'products'
+            } else if (isFlowerCategory || isVapeCategory) {
+              return products.length === 1 ? 'strain' : 'strains'
+            } else {
+              return products.length === 1 ? 'product' : 'products'
+            }
           }
-        }
-        
-        return (
-          <div key={strainType} className="w-full">
-            {/* Section Header with enhanced Apple styling */}
-            <div 
-              className={`px-6 py-5 border-b ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}
-              style={{
-                ...getSectionHeaderStyle(config.color, colors.header_blur_effect),
-                borderColor: colors.table_border_color + '50'
-              }}
-            >
-              <div className="flex items-center justify-between">
-                <h2 
-                  className="text-3xl font-bold tracking-wider font-sf-pro-display drop-shadow-2xl"
-                  style={{ color: config.textColor }}
-                >
-                  {strainType.toUpperCase()}
-                </h2>
-                <div 
-                  className="text-sm font-medium drop-shadow-lg px-3 py-1 rounded-full"
-                  style={{ 
-                    backgroundColor: colors.product_count_bg + '20',
-                    color: colors.product_count_text,
-                    backdropFilter: colors.header_blur_effect ? 'blur(8px)' : 'none'
-                  }}
-                >
-                  {products.length} {getProductTerminology()}
+          
+          return (
+            <div key={strainType} className="w-full">
+              {/* Section Header with enhanced Apple styling */}
+              <div 
+                className={`px-6 py-5 border-b ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}
+                style={{
+                  ...getSectionHeaderStyle(config.color, colors.header_blur_effect),
+                  borderColor: colors.table_border_color + '50'
+                }}
+              >
+                <div className="flex items-center justify-between">
+                  <h2 
+                    className="text-3xl font-bold tracking-wider font-sf-pro-display drop-shadow-2xl"
+                    style={{ color: config.textColor }}
+                  >
+                    {strainType.toUpperCase()}
+                  </h2>
+                  <div 
+                    className="text-sm font-medium drop-shadow-lg px-3 py-1 rounded-full"
+                    style={{ 
+                      backgroundColor: colors.product_count_bg + '20',
+                      color: colors.product_count_text,
+                      backdropFilter: colors.header_blur_effect ? 'blur(8px)' : 'none'
+                    }}
+                  >
+                    {products.length} {getProductTerminology()}
+                  </div>
                 </div>
               </div>
+              
+              {/* Products Table with enhanced readability */}
+              <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
+                {renderProductTable(products)}
+              </div>
             </div>
-            
-            {/* Products Table with enhanced readability */}
-            <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
-              {renderProductTable(products)}
-            </div>
-          </div>
-        )
-      })}
+          )
+        })
+      )}
     </div>
   )
 } 

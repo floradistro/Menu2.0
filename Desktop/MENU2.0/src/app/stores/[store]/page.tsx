@@ -22,8 +22,10 @@ export default async function StorePage({ params }: PageProps) {
   const categories = [
     { name: 'Flower', icon: CATEGORY_ICONS['Flower'], color: CATEGORY_GRADIENTS['Flower'] },
     { name: 'Vape & Concentrate', icon: '💨💎', color: 'from-blue-600 via-orange-500 to-yellow-500' },
+    { name: 'Concentrate', icon: CATEGORY_ICONS['Concentrate'], color: CATEGORY_GRADIENTS['Concentrate'] },
     { name: 'Edible', icon: CATEGORY_ICONS['Edible'], color: CATEGORY_GRADIENTS['Edible'] },
-    { name: 'Moonwater', icon: CATEGORY_ICONS['Moonwater'], color: CATEGORY_GRADIENTS['Moonwater'] }
+    { name: 'Pricing', icon: '💰', color: 'from-green-600 to-emerald-500' },
+    { name: 'Welcome', icon: '📋', color: 'from-indigo-600 to-purple-500' }
   ]
 
   return (
@@ -74,13 +76,20 @@ export default async function StorePage({ params }: PageProps) {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl font-light text-gray-200 mb-8 text-center font-sf-pro-display">Browse Categories</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
             {categories.map((category) => (
               <Link
                 key={category.name}
-                href={category.name === 'Vape & Concentrate' 
-                  ? `/stores/${params.store}/menus/vape-concentrate`
-                  : `/stores/${params.store}/menus/${category.name.toLowerCase()}`
+                href={
+                  category.name === 'Vape & Concentrate' 
+                    ? `/stores/${params.store}/menus/vape-concentrate`
+                    : category.name === 'Concentrate'
+                    ? `/stores/${params.store}/menus/concentrate`
+                    : category.name === 'Pricing'
+                    ? `/stores/${params.store}/menus/pricing`
+                    : category.name === 'Welcome'
+                    ? `/stores/${params.store}/menus/welcome`
+                    : `/stores/${params.store}/menus/${category.name.toLowerCase()}`
                 }
                 className="group bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6 hover:border-gray-600 hover:bg-gray-700/50 transition-all duration-300 text-center transform hover:scale-105"
               >

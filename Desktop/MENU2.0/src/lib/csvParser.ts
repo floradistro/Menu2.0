@@ -83,15 +83,18 @@ export function generateCSVTemplate(): string {
     'terpene',
     'strength',
     'thca_percent',
-    'delta9_percent'
+    'delta9_percent',
+    'is_gummy',
+    'is_cookie'
   ]
   
   const examples = [
-    ['CLT', 'Flower', 'Blue Dream', 'Hybrid', 'Blueberry x Haze', 'Premium indoor flower', 'Myrcene', '3.5g', '24.8', '0.28'],
-    ['CLT', 'Vape', 'OG Kush Cart', 'Indica', '', 'Premium distillate cartridge', 'Limonene', '1g', '85.2', '0.1'],
-    ['CLT', 'Edible', 'Gummy Bears', '', '', 'Delicious fruit gummies', '', '10mg', '', ''],
-    ['CLT', 'Concentrate', 'Live Resin', 'Hybrid', '', 'Premium concentrate', 'Caryophyllene', '1g', '78.5', '0.15'],
-    ['CLT', 'Moonwater', 'Moonwater Original', '', '', 'Cannabis beverage', '', '5mg', '', '']
+    ['CLT', 'Flower', 'Blue Dream', 'Hybrid', 'Blueberry x Haze', 'Premium indoor flower', 'Myrcene', '3.5g', '24.8', '0.28', 'false', 'false'],
+    ['CLT', 'Vape', 'OG Kush Cart', 'Indica', '', 'Premium distillate cartridge', 'Limonene', '1g', '85.2', '0.1', 'false', 'false'],
+    ['CLT', 'Edible', 'Gummy Bears', '', '', 'Delicious fruit gummies', '', '10mg', '', '', 'true', 'false'],
+    ['CLT', 'Edible', 'Chocolate Cookies', '', '', 'Premium baked goods', '', '10mg', '', '', 'false', 'true'],
+    ['CLT', 'Concentrate', 'Live Resin', 'Hybrid', '', 'Premium concentrate', 'Caryophyllene', '1g', '78.5', '0.15', 'false', 'false'],
+    ['CLT', 'Moonwater', 'Moonwater Original', '', '', 'Cannabis beverage', '', '5mg', '', '', 'false', 'false']
   ]
   
   const csvLines = [headers.join(',')]

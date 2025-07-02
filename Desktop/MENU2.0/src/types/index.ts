@@ -12,6 +12,8 @@ export interface Product {
   delta9_percent?: number
   store_code?: string
   created_at?: string
+  is_gummy?: boolean
+  is_cookie?: boolean
 }
 
 // Store types
@@ -52,4 +54,6 @@ export interface ProductRow {
   strength?: string
   thca_percent?: string
   delta9_percent?: string
+  is_gummy?: string
+  is_cookie?: string
 } 

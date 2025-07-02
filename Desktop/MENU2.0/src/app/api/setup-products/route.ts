@@ -29,7 +29,9 @@ export async function POST(request: NextRequest) {
         strength: '3.5g',
         thca_percent: 26.4,
         delta9_percent: 0.3,
-        store_code: 'TN'
+        store_code: 'TN',
+        is_gummy: false,
+        is_cookie: false
       },
       {
         product_name: 'Blue Dream',
@@ -41,7 +43,9 @@ export async function POST(request: NextRequest) {
         strength: '3.5g',
         thca_percent: 24.8,
         delta9_percent: 0.28,
-        store_code: 'TN'
+        store_code: 'TN',
+        is_gummy: false,
+        is_cookie: false
       },
       {
         product_name: 'OG Kush Cart',
@@ -52,7 +56,9 @@ export async function POST(request: NextRequest) {
         strength: '1g',
         thca_percent: 85.2,
         delta9_percent: 0.1,
-        store_code: 'TN'
+        store_code: 'TN',
+        is_gummy: false,
+        is_cookie: false
       },
       {
         product_name: 'Gummy Bears',
@@ -60,7 +66,9 @@ export async function POST(request: NextRequest) {
         description: 'Delicious fruit-flavored gummies',
         strength: '10mg',
         delta9_percent: 10.0,
-        store_code: 'TN'
+        store_code: 'TN',
+        is_gummy: true,
+        is_cookie: false
       },
       {
         product_name: 'Moonwater Original',
@@ -68,7 +76,9 @@ export async function POST(request: NextRequest) {
         description: 'Cannabis-infused sparkling water',
         strength: '10mg',
         delta9_percent: 10.0,
-        store_code: 'TN'
+        store_code: 'TN',
+        is_gummy: false,
+        is_cookie: false
       }
     ]
 

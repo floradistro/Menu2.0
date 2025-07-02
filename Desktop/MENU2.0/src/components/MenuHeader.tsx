@@ -78,35 +78,37 @@ export default function MenuHeader({ storeCode, category, storeName }: MenuHeade
               height={80}
               className="w-20 h-20 object-contain"
             />
-            <h1 
-              className="text-7xl font-normal tracking-wide lowercase" 
-              style={{ 
-                fontFamily: 'SF Pro Display, -apple-system, BlinkMacSystemFont, sans-serif',
-                color: colors.primary_text_color
-              }}
-            >
-              {category} menu
-            </h1>
-          </div>
-          <div className="text-right">
-            <div 
-              className="text-sm"
-              style={{ color: colors.secondary_text_color }}
-            >
-              Store Code: {storeCode}
+            <div className="flex items-center gap-12">
+              <h1 
+                className="text-7xl font-normal tracking-normal lowercase" 
+                style={{ 
+                  fontFamily: 'SF Pro Display, -apple-system, BlinkMacSystemFont, sans-serif',
+                  color: colors.primary_text_color
+                }}
+              >
+                {category}
+              </h1>
+              {category.toLowerCase() === 'flower' && (
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-medium" style={{ color: colors.primary_text_color }}>3.5g</span>
+                    <span className="text-4xl font-bold" style={{ color: '#22c55e' }}>$40</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-medium" style={{ color: colors.primary_text_color }}>7g</span>
+                    <span className="text-4xl font-bold" style={{ color: '#22c55e' }}>$70</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-medium" style={{ color: colors.primary_text_color }}>14g</span>
+                    <span className="text-4xl font-bold" style={{ color: '#22c55e' }}>$110</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-medium" style={{ color: colors.primary_text_color }}>28g</span>
+                    <span className="text-4xl font-bold" style={{ color: '#22c55e' }}>$200</span>
+                  </div>
+                </div>
+              )}
             </div>
-            <Link
-              href={`/stores/${storeCode.toLowerCase()}/admin`}
-              className="inline-flex items-center px-3 py-1 backdrop-blur-sm border text-xs font-medium rounded-md transition-all duration-200 mt-2 hover:opacity-80"
-              style={{
-                backgroundColor: colors.table_header_bg + '60',
-                borderColor: colors.table_border_color + '60',
-                color: colors.secondary_text_color
-              }}
-            >
-              <span className="mr-1">⚙️</span>
-              Admin
-            </Link>
           </div>
         </div>
       </div>

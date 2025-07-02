@@ -10,11 +10,14 @@ import { parseNumericValue } from '@/lib/utils'
 
 export default function ProductManager() {
   const [products, setProducts] = useState<Product[]>([])
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set())
   const [selectAll, setSelectAll] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<string>('All')
+  const [searchTerm, setSearchTerm] = useState('')
   
   // Form state
   const [formData, setFormData] = useState<Partial<Product>>({
@@ -27,12 +30,38 @@ export default function ProductManager() {
     strength: '',
     thca_percent: undefined,
     delta9_percent: undefined,
-    store_code: ''
+    store_code: '',
+    is_gummy: false,
+    is_cookie: false
   })
 
   useEffect(() => {
     fetchProducts()
   }, [])
+
+  // Filter products when products, selectedCategory, or searchTerm changes
+  useEffect(() => {
+    let filtered = products
+
+    // Filter by category
+    if (selectedCategory !== 'All') {
+      filtered = filtered.filter(product => product.product_category === selectedCategory)
+    }
+
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter(product =>
+        product.product_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.strain_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.strain_cross?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.store_code?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    }
+
+    setFilteredProducts(filtered)
+    setSelectedProducts(new Set()) // Clear selections when filter changes
+    setSelectAll(false)
+  }, [products, selectedCategory, searchTerm])
 
   const fetchProducts = async () => {
     setLoading(true)
@@ -55,32 +84,105 @@ export default function ProductManager() {
     e.preventDefault()
     
     try {
-      const productData = {
-        ...formData,
-        thca_percent: formData.thca_percent ? parseFloat(formData.thca_percent.toString()) : null,
-        delta9_percent: formData.delta9_percent ? parseFloat(formData.delta9_percent.toString()) : null
+      // Validate required fields
+      if (!formData.product_name?.trim()) {
+        alert('Product name is required.')
+        return
       }
+      
+      if (!formData.product_category?.trim()) {
+        alert('Product category is required.')
+        return
+      }
+      
+      if (!formData.store_code?.trim()) {
+        alert('Store code is required.')
+        return
+      }
+
+      // Prepare product data - only include supported fields
+      const productData: any = {
+        product_name: formData.product_name?.trim(),
+        product_category: formData.product_category?.trim(),
+        store_code: formData.store_code?.trim().toUpperCase(),
+        strain_type: formData.strain_type?.trim() || null,
+        strain_cross: formData.strain_cross?.trim() || null,
+        description: formData.description?.trim() || null,
+        terpene: formData.terpene?.trim() || null,
+        strength: formData.strength?.trim() || null,
+        thca_percent: formData.thca_percent ? parseFloat(formData.thca_percent.toString()) : null,
+        delta9_percent: formData.delta9_percent ? parseFloat(formData.delta9_percent.toString()) : null,
+      }
+
+      console.log('Submitting product data:', productData)
 
       if (editingProduct?.id) {
         // Update existing product
-        const { error } = await supabase
+        console.log('Updating product with ID:', editingProduct.id)
+        
+        // Try with gummy/cookie fields first
+        let { data, error } = await supabase
           .from('products')
-          .update(productData)
+          .update({
+            ...productData,
+            is_gummy: formData.is_gummy || false,
+            is_cookie: formData.is_cookie || false
+          })
           .eq('id', editingProduct.id)
+          .select()
 
-        if (error) throw error
+        // If that fails due to missing columns, try without them
+        if (error && error.message.includes('is_cookie')) {
+          console.log('Retrying without gummy/cookie fields...')
+          const result = await supabase
+            .from('products')
+            .update(productData)
+            .eq('id', editingProduct.id)
+            .select()
+          
+          data = result.data
+          error = result.error
+        }
+
+        console.log('Update response:', { data, error })
+        if (error) {
+          console.error('Update error details:', error)
+          throw error
+        }
       } else {
         // Create new product
-        const { error } = await supabase
+        console.log('Creating new product')
+        
+        // Try with gummy/cookie fields first
+        let { data, error } = await supabase
           .from('products')
-          .insert([productData])
+          .insert([{
+            ...productData,
+            is_gummy: formData.is_gummy || false,
+            is_cookie: formData.is_cookie || false
+          }])
+          .select()
 
-        if (error) throw error
+        // If that fails due to missing columns, try without them
+        if (error && error.message.includes('is_cookie')) {
+          console.log('Retrying without gummy/cookie fields...')
+          const result = await supabase
+            .from('products')
+            .insert([productData])
+            .select()
+          
+          data = result.data
+          error = result.error
+        }
+
+        console.log('Insert response:', { data, error })
+        if (error) {
+          console.error('Insert error details:', error)
+          throw error
+        }
       }
 
       // Reset form and refresh data
-      setShowForm(false)
-      setEditingProduct(null)
       setFormData({
         product_name: '',
         product_category: '',
@@ -91,11 +193,26 @@ export default function ProductManager() {
         strength: '',
         thca_percent: undefined,
         delta9_percent: undefined,
-        store_code: ''
+        store_code: '',
+        is_gummy: false,
+        is_cookie: false
       })
-      fetchProducts()
+      setEditingProduct(null)
+      setShowForm(false)
+      
+      // Refresh products list
+      await fetchProducts()
+      
+      alert(editingProduct ? 'Product updated successfully!' : 'Product created successfully!')
+
     } catch (error) {
-      alert('Error saving product. Please try again.')
+      console.error('Error saving product:', error)
+      
+      if (error instanceof Error && error.message.includes('is_cookie')) {
+        alert('Database schema needs to be updated. Please run the database setup at /admin/setup to add the missing columns.')
+      } else {
+        alert(`Error saving product: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      }
     }
   }
 
@@ -111,7 +228,9 @@ export default function ProductManager() {
       strength: product.strength || '',
       thca_percent: product.thca_percent,
       delta9_percent: product.delta9_percent,
-      store_code: product.store_code || ''
+      store_code: product.store_code || '',
+      is_gummy: product.is_gummy || false,
+      is_cookie: product.is_cookie || false
     })
     setShowForm(true)
   }
@@ -142,7 +261,7 @@ export default function ProductManager() {
       newSelected.add(productId)
     }
     setSelectedProducts(newSelected)
-    setSelectAll(newSelected.size === products.length)
+    setSelectAll(newSelected.size === filteredProducts.length)
   }
 
   const handleSelectAll = () => {
@@ -150,10 +269,32 @@ export default function ProductManager() {
       setSelectedProducts(new Set())
       setSelectAll(false)
     } else {
-      setSelectedProducts(new Set(products.map(p => p.id)))
+      setSelectedProducts(new Set(filteredProducts.map(p => p.id)))
       setSelectAll(true)
     }
   }
+
+  // Group products by category for display
+  const groupedProducts = filteredProducts.reduce((acc, product) => {
+    const category = product.product_category || 'Uncategorized'
+    if (!acc[category]) {
+      acc[category] = []
+    }
+    acc[category].push(product)
+    return acc
+  }, {} as Record<string, Product[]>)
+
+  // Get category counts
+  const getCategoryCounts = () => {
+    const counts = products.reduce((acc, product) => {
+      const category = product.product_category || 'Uncategorized'
+      acc[category] = (acc[category] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+    return counts
+  }
+
+  const categoryCounts = getCategoryCounts()
 
   const handleBulkDelete = async () => {
     if (selectedProducts.size === 0) return
@@ -187,6 +328,9 @@ export default function ProductManager() {
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center space-x-4">
           <h2 className="text-2xl font-light text-gray-100">Product Management</h2>
+          <div className="text-sm text-gray-400">
+            {filteredProducts.length} of {products.length} products
+          </div>
           {selectedProducts.size > 0 && (
             <button
               onClick={handleBulkDelete}
@@ -211,7 +355,9 @@ export default function ProductManager() {
               strength: '',
               thca_percent: undefined,
               delta9_percent: undefined,
-              store_code: ''
+              store_code: '',
+              is_gummy: false,
+              is_cookie: false
             })
           }}
           className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white font-medium rounded-md hover:from-green-700 hover:to-green-600 transition-all duration-200 shadow-lg"
@@ -219,6 +365,69 @@ export default function ProductManager() {
           <span className="mr-2">➕</span>
           Add Product
         </button>
+      </div>
+
+      {/* Category Filter Tabs and Search */}
+      <div className="mb-6 space-y-4">
+        {/* Search Bar */}
+        <div className="flex items-center space-x-4">
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder="Search products by name, strain type, lineage, or store..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="px-3 py-2 text-gray-400 hover:text-gray-300 transition-colors"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+
+        {/* Category Filter Tabs */}
+        <div className="flex space-x-2 overflow-x-auto pb-2">
+          <button
+            onClick={() => setSelectedCategory('All')}
+            className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap ${
+              selectedCategory === 'All'
+                ? 'bg-green-600 text-white shadow-lg'
+                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+            }`}
+          >
+            All ({products.length})
+          </button>
+          {VALID_CATEGORIES.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap ${
+                selectedCategory === category
+                  ? 'bg-green-600 text-white shadow-lg'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              }`}
+            >
+              {category} ({categoryCounts[category] || 0})
+            </button>
+          ))}
+          {categoryCounts['Uncategorized'] && (
+            <button
+              onClick={() => setSelectedCategory('Uncategorized')}
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap ${
+                selectedCategory === 'Uncategorized'
+                  ? 'bg-red-600 text-white shadow-lg'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              }`}
+            >
+              Uncategorized ({categoryCounts['Uncategorized']})
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Product Form */}
@@ -356,6 +565,36 @@ export default function ProductManager() {
               </div>
             </div>
 
+            {/* Edible Type Checkboxes - Only show for Edible category */}
+            {formData.product_category === 'Edible' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-800/50 rounded-lg border border-gray-600">
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="is_gummy"
+                    checked={formData.is_gummy || false}
+                    onChange={(e) => setFormData({ ...formData, is_gummy: e.target.checked })}
+                    className="rounded border-gray-600 bg-gray-800 text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
+                  />
+                  <label htmlFor="is_gummy" className="text-sm font-medium text-gray-300">
+                    🍬 Is Gummy
+                  </label>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="is_cookie"
+                    checked={formData.is_cookie || false}
+                    onChange={(e) => setFormData({ ...formData, is_cookie: e.target.checked })}
+                    className="rounded border-gray-600 bg-gray-800 text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
+                  />
+                  <label htmlFor="is_cookie" className="text-sm font-medium text-gray-300">
+                    🍪 Is Cookie
+                  </label>
+                </div>
+              </div>
+            )}
+
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Description
@@ -391,62 +630,175 @@ export default function ProductManager() {
       )}
 
       {/* Products Table */}
-              <div className="overflow-x-auto hide-scrollbar">
+      <div className="overflow-x-auto hide-scrollbar">
+        {selectedCategory === 'All' && filteredProducts.length > 0 ? (
+          // Grouped view when showing all categories
+          <div className="space-y-6">
+            {Object.entries(groupedProducts).map(([category, categoryProducts]) => (
+              <div key={category}>
+                <div className="flex items-center mb-3">
+                  <h3 className="text-lg font-medium text-gray-200 flex items-center">
+                    <span className="mr-2">
+                      {category === 'Flower' && '🌸'}
+                      {category === 'Vape' && '💨'}
+                      {category === 'Edible' && '🍬'}
+                      {category === 'Concentrate' && '💎'}
+                      {category === 'Moonwater' && '🌙'}
+                      {category === 'Uncategorized' && '❓'}
+                    </span>
+                    {category} ({categoryProducts.length})
+                  </h3>
+                </div>
+                
+                <table className="w-full mb-6 bg-gray-800/50 rounded-lg overflow-hidden">
+                  <thead className="bg-gray-700/50">
+                    <tr className="border-b border-gray-600">
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-300 w-12">
+                        <input
+                          type="checkbox"
+                          checked={categoryProducts.every(p => selectedProducts.has(p.id))}
+                          onChange={() => {
+                            const allSelected = categoryProducts.every(p => selectedProducts.has(p.id))
+                            const newSelected = new Set(selectedProducts)
+                            if (allSelected) {
+                              categoryProducts.forEach(p => newSelected.delete(p.id))
+                            } else {
+                              categoryProducts.forEach(p => newSelected.add(p.id))
+                            }
+                            setSelectedProducts(newSelected)
+                          }}
+                          className="rounded border-gray-600 bg-gray-800 text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
+                        />
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Product Name</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Type</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Strain Type</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Strength</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">THCA %</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Store</th>
+                      <th className="text-right py-3 px-4 text-sm font-medium text-gray-300">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-600">
+                    {categoryProducts.map((product) => (
+                      <tr key={product.id} className="hover:bg-gray-700/30 transition-colors duration-150">
+                        <td className="py-3 px-4">
+                          <input
+                            type="checkbox"
+                            checked={selectedProducts.has(product.id)}
+                            onChange={() => handleSelectProduct(product.id)}
+                            className="rounded border-gray-600 bg-gray-800 text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
+                          />
+                        </td>
+                        <td className="py-3 px-4 text-gray-200">{product.product_name}</td>
+                        <td className="py-3 px-4 text-gray-300">
+                          {product.product_category === 'Edible' ? (
+                            <div className="flex space-x-2">
+                              {product.is_gummy && <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full">🍬 Gummy</span>}
+                              {product.is_cookie && <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-full">🍪 Cookie</span>}
+                              {!product.is_gummy && !product.is_cookie && <span className="text-gray-500">-</span>}
+                            </div>
+                          ) : '-'}
+                        </td>
+                        <td className="py-3 px-4 text-gray-300">{product.strain_type || '-'}</td>
+                        <td className="py-3 px-4 text-gray-300">{product.strength || '-'}</td>
+                        <td className="py-3 px-4 text-gray-300">{product.thca_percent ? `${product.thca_percent}%` : '-'}</td>
+                        <td className="py-3 px-4 text-gray-300">{product.store_code || '-'}</td>
+                        <td className="py-3 px-4 text-right space-x-2">
+                          <button
+                            onClick={() => handleEdit(product)}
+                            className="text-blue-400 hover:text-blue-300 transition-colors duration-150"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(product.id)}
+                            className="text-red-400 hover:text-red-300 transition-colors duration-150"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+          </div>
+        ) : (
+          // Standard view when filtering by specific category
           <table className="w-full">
-          <thead>
-            <tr className="border-b border-gray-700">
-              <th className="text-left py-3 px-4 text-sm font-medium text-gray-400 w-12">
-                <input
-                  type="checkbox"
-                  checked={selectAll}
-                  onChange={handleSelectAll}
-                  className="rounded border-gray-600 bg-gray-800 text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
-                />
-              </th>
-              <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Product Name</th>
-              <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Category</th>
-              <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Strain Type</th>
-              <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Strength</th>
-              <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">THCA %</th>
-              <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Store</th>
-              <th className="text-right py-3 px-4 text-sm font-medium text-gray-400">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-700">
-            {products.map((product) => (
-              <tr key={product.id} className="hover:bg-gray-700/30 transition-colors duration-150">
-                <td className="py-3 px-4">
+            <thead>
+              <tr className="border-b border-gray-700">
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400 w-12">
                   <input
                     type="checkbox"
-                    checked={selectedProducts.has(product.id)}
-                    onChange={() => handleSelectProduct(product.id)}
+                    checked={selectAll}
+                    onChange={handleSelectAll}
                     className="rounded border-gray-600 bg-gray-800 text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
                   />
-                </td>
-                <td className="py-3 px-4 text-gray-200">{product.product_name}</td>
-                <td className="py-3 px-4 text-gray-300">{product.product_category || '-'}</td>
-                <td className="py-3 px-4 text-gray-300">{product.strain_type || '-'}</td>
-                <td className="py-3 px-4 text-gray-300">{product.strength || '-'}</td>
-                <td className="py-3 px-4 text-gray-300">{product.thca_percent ? `${product.thca_percent}%` : '-'}</td>
-                <td className="py-3 px-4 text-gray-300">{product.store_code || '-'}</td>
-                <td className="py-3 px-4 text-right space-x-2">
-                  <button
-                    onClick={() => handleEdit(product)}
-                    className="text-blue-400 hover:text-blue-300 transition-colors duration-150"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(product.id)}
-                    className="text-red-400 hover:text-red-300 transition-colors duration-150"
-                  >
-                    Delete
-                  </button>
-                </td>
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Product Name</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Category</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Type</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Strain Type</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Strength</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">THCA %</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Store</th>
+                <th className="text-right py-3 px-4 text-sm font-medium text-gray-400">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-700">
+              {filteredProducts.map((product) => (
+                <tr key={product.id} className="hover:bg-gray-700/30 transition-colors duration-150">
+                  <td className="py-3 px-4">
+                    <input
+                      type="checkbox"
+                      checked={selectedProducts.has(product.id)}
+                      onChange={() => handleSelectProduct(product.id)}
+                      className="rounded border-gray-600 bg-gray-800 text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
+                    />
+                  </td>
+                  <td className="py-3 px-4 text-gray-200">{product.product_name}</td>
+                  <td className="py-3 px-4 text-gray-300">{product.product_category || '-'}</td>
+                  <td className="py-3 px-4 text-gray-300">
+                    {product.product_category === 'Edible' ? (
+                      <div className="flex space-x-2">
+                        {product.is_gummy && <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full">🍬 Gummy</span>}
+                        {product.is_cookie && <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-full">🍪 Cookie</span>}
+                        {!product.is_gummy && !product.is_cookie && <span className="text-gray-500">-</span>}
+                      </div>
+                    ) : '-'}
+                  </td>
+                  <td className="py-3 px-4 text-gray-300">{product.strain_type || '-'}</td>
+                  <td className="py-3 px-4 text-gray-300">{product.strength || '-'}</td>
+                  <td className="py-3 px-4 text-gray-300">{product.thca_percent ? `${product.thca_percent}%` : '-'}</td>
+                  <td className="py-3 px-4 text-gray-300">{product.store_code || '-'}</td>
+                  <td className="py-3 px-4 text-right space-x-2">
+                    <button
+                      onClick={() => handleEdit(product)}
+                      className="text-blue-400 hover:text-blue-300 transition-colors duration-150"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(product.id)}
+                      className="text-red-400 hover:text-red-300 transition-colors duration-150"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        {filteredProducts.length === 0 && products.length > 0 && (
+          <div className="text-center py-12 text-gray-500">
+            No products found matching your filters. Try adjusting your search or category selection.
+          </div>
+        )}
 
         {products.length === 0 && (
           <div className="text-center py-12 text-gray-500">

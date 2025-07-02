@@ -141,7 +141,9 @@ export default function BulkUpload() {
           strength: row.strength || null,
           thca_percent: parseNumericValue(row.thca_percent),
           delta9_percent: parseNumericValue(row.delta9_percent),
-          store_code: row.store_code
+          store_code: row.store_code,
+          is_gummy: row.is_gummy === 'true' || row.is_gummy === '1' || false,
+          is_cookie: row.is_cookie === 'true' || row.is_cookie === '1' || false
         }))
         
         const { error } = await supabase

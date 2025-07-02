@@ -201,95 +201,119 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false, concent
     }, {} as Record<string, Product[]>)
   }
 
-  const renderProductTable = (products: Product[], isVape: boolean) => {
+  const renderVapeTable = (products: Product[]) => {
     return (
-      <table className="w-full">
-        <thead 
-          className="border-b"
-          style={{ 
-            backgroundColor: colors.table_header_bg,
-            borderColor: colors.table_border_color 
+      <div className="w-full">
+        {/* Vape Header */}
+        <div 
+          className={`px-6 py-5 border-b ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}
+          style={{
+            ...getSectionHeaderStyle(getSectionConfig('Vape', colors).color, colors.header_blur_effect),
+            borderColor: colors.table_border_color + '50'
           }}
         >
-          <tr>
-            <th 
-              className="text-left py-3 px-4 text-lg font-semibold w-3/5"
-              style={{ color: colors.primary_text_color }}
+          <div className="flex items-center justify-between">
+            <h2 
+              className="text-3xl font-bold tracking-wider font-sf-pro-display drop-shadow-2xl"
+              style={{ color: getSectionConfig('Vape', colors).textColor }}
             >
-              <div className="grid grid-cols-12 items-center">
-                <div className="col-span-5">Product</div>
-                <div className="col-span-7 text-base font-medium opacity-80 text-center">
-                  {isVape ? (showLineage ? 'Lineage' : 'Terpene') : 'Lineage'}
-                </div>
-              </div>
-            </th>
-
-            <th 
-              className="text-left py-3 px-3 text-lg font-medium w-1/5"
-              style={{ color: colors.primary_text_color }}
-            >
-              Type
-            </th>
-            
-            <th 
-              className="text-right py-3 px-3 text-lg font-medium w-1/5"
-              style={{ color: colors.primary_text_color }}
-            >
-              THCA %
-            </th>
-          </tr>
-        </thead>
-        <tbody className={getTableBorderStyle(colors)} style={{ borderColor: colors.table_border_color }}>
-          {products.map((product, index) => (
-            <tr 
-              key={product.id} 
-              className="transition-all duration-200"
-              style={{
-                ...(hoveredRowIndex === index 
-                  ? getHoverRowStyle(colors)
-                  : getAlternatingRowStyle(index, colors)),
-                ...getRowBorderStyle(colors)
+              VAPE
+            </h2>
+            <div 
+              className="text-sm font-medium drop-shadow-lg px-3 py-1 rounded-full"
+              style={{ 
+                backgroundColor: colors.product_count_bg + '20',
+                color: colors.product_count_text,
+                backdropFilter: colors.header_blur_effect ? 'blur(8px)' : 'none'
               }}
-              onMouseEnter={() => setHoveredRowIndex(index)}
-              onMouseLeave={() => setHoveredRowIndex(null)}
             >
-              <td className="py-2 px-4">
-                <div className="grid grid-cols-12 items-center">
-                  <div 
-                    className="text-3xl font-medium col-span-5"
-                    style={{ color: colors.primary_text_color }}
-                  >
-                    {product.product_name}
-                  </div>
-                  <div 
-                    className="text-lg col-span-7 opacity-80 text-center"
-                    style={{ color: colors.primary_text_color }}
-                  >
-                    {isVape ? (
-                      <SmoothTextDisplay 
-                        text={showLineage ? (product.strain_cross || '-') : (product.terpene || '-')}
-                      />
-                    ) : (
-                      product.strain_cross || '-'
-                    )}
-                  </div>
-                </div>
-              </td>
-
-              <td className="py-2 px-3 text-left">
-                <span 
-                  className="text-2xl font-semibold"
+              {products.length} {products.length === 1 ? 'product' : 'products'}
+            </div>
+          </div>
+        </div>
+        
+        {/* Vape Table */}
+        <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
+          <table className="w-full">
+            <thead 
+              className="border-b"
+              style={{ 
+                backgroundColor: colors.table_header_bg,
+                borderColor: colors.table_border_color 
+              }}
+            >
+              <tr>
+                <th 
+                  className="text-left py-3 px-4 text-lg font-semibold w-3/5"
                   style={{ color: colors.primary_text_color }}
                 >
-                  {product.strain_type || '-'}
-                </span>
-              </td>
-              
-              <td className="py-2 px-3 text-right">
-                <div className="flex flex-col items-end">
-                  {isVape ? (
-                    // For vape products: only show THCA, not Delta-9
-                    <>
+                  <div className="grid grid-cols-12 items-center">
+                    <div className="col-span-5">Product</div>
+                    <div className="col-span-7 text-base font-medium opacity-80 text-center">
+                      {showLineage ? 'Lineage' : 'Terpene'}
+                    </div>
+                  </div>
+                </th>
+
+                <th 
+                  className="text-left py-3 px-3 text-lg font-medium w-1/5"
+                  style={{ color: colors.primary_text_color }}
+                >
+                  Type
+                </th>
+                
+                <th 
+                  className="text-right py-3 px-3 text-lg font-medium w-1/5"
+                  style={{ color: colors.primary_text_color }}
+                >
+                  THCA %
+                </th>
+              </tr>
+            </thead>
+            <tbody className={getTableBorderStyle(colors)} style={{ borderColor: colors.table_border_color }}>
+              {products.map((product, index) => (
+                <tr 
+                  key={product.id} 
+                  className="transition-all duration-200"
+                  style={{
+                    ...(hoveredRowIndex === index 
+                      ? getHoverRowStyle(colors)
+                      : getAlternatingRowStyle(index, colors)),
+                    ...getRowBorderStyle(colors)
+                  }}
+                  onMouseEnter={() => setHoveredRowIndex(index)}
+                  onMouseLeave={() => setHoveredRowIndex(null)}
+                >
+                  <td className="py-2 px-4">
+                    <div className="grid grid-cols-12 items-center">
+                      <div 
+                        className="text-3xl font-medium col-span-5"
+                        style={{ color: colors.primary_text_color }}
+                      >
+                        {product.product_name}
+                      </div>
+                      <div 
+                        className="text-lg col-span-7 opacity-80 text-center"
+                        style={{ color: colors.primary_text_color }}
+                      >
+                        <SmoothTextDisplay 
+                          text={showLineage ? (product.strain_cross || '-') : (product.terpene || '-')}
+                        />
+                      </div>
+                    </div>
+                  </td>
+
+                  <td className="py-2 px-3 text-left">
+                    <span 
+                      className="text-2xl font-semibold"
+                      style={{ color: colors.primary_text_color }}
+                    >
+                      {product.strain_type || '-'}
+                    </span>
+                  </td>
+                  
+                  <td className="py-2 px-3 text-right">
+                    <div className="flex flex-col items-end">
                       {product.thca_percent && (
                         <span 
                           className="text-xl font-bold"
@@ -301,10 +325,128 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false, concent
                       {!product.thca_percent && (
                         <span style={{ color: colors.secondary_text_color }}>-</span>
                       )}
-                    </>
-                  ) : (
-                    // For concentrate products: only show THCA, not Delta-9
-                    <>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )
+  }
+
+  const renderConcentrateTable = (products: Product[]) => {
+    return (
+      <div className="w-full">
+        {/* Concentrate Header */}
+        <div 
+          className={`px-6 py-5 border-b ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}
+          style={{
+            ...getSectionHeaderStyle(getSectionConfig('Concentrate', colors).color, colors.header_blur_effect),
+            borderColor: colors.table_border_color + '50'
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <h2 
+              className="text-3xl font-bold tracking-wider font-sf-pro-display drop-shadow-2xl"
+              style={{ color: getSectionConfig('Concentrate', colors).textColor }}
+            >
+              CONCENTRATE
+            </h2>
+            <div 
+              className="text-sm font-medium drop-shadow-lg px-3 py-1 rounded-full"
+              style={{ 
+                backgroundColor: colors.product_count_bg + '20',
+                color: colors.product_count_text,
+                backdropFilter: colors.header_blur_effect ? 'blur(8px)' : 'none'
+              }}
+            >
+              {products.length} {products.length === 1 ? 'product' : 'products'}
+            </div>
+          </div>
+        </div>
+        
+        {/* Concentrate Table */}
+        <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
+          <table className="w-full">
+            <thead 
+              className="border-b"
+              style={{ 
+                backgroundColor: colors.table_header_bg,
+                borderColor: colors.table_border_color 
+              }}
+            >
+              <tr>
+                <th 
+                  className="text-left py-3 px-4 text-lg font-semibold w-3/5"
+                  style={{ color: colors.primary_text_color }}
+                >
+                  <div className="grid grid-cols-12 items-center">
+                    <div className="col-span-5">Product</div>
+                    <div className="col-span-7 text-base font-medium opacity-80 text-center">
+                      Lineage
+                    </div>
+                  </div>
+                </th>
+
+                <th 
+                  className="text-left py-3 px-3 text-lg font-medium w-1/5"
+                  style={{ color: colors.primary_text_color }}
+                >
+                  Type
+                </th>
+                
+                <th 
+                  className="text-right py-3 px-3 text-lg font-medium w-1/5"
+                  style={{ color: colors.primary_text_color }}
+                >
+                  THCA %
+                </th>
+              </tr>
+            </thead>
+            <tbody className={getTableBorderStyle(colors)} style={{ borderColor: colors.table_border_color }}>
+              {products.map((product, index) => (
+                <tr 
+                  key={product.id} 
+                  className="transition-all duration-200"
+                  style={{
+                    ...(hoveredRowIndex === index 
+                      ? getHoverRowStyle(colors)
+                      : getAlternatingRowStyle(index, colors)),
+                    ...getRowBorderStyle(colors)
+                  }}
+                  onMouseEnter={() => setHoveredRowIndex(index)}
+                  onMouseLeave={() => setHoveredRowIndex(null)}
+                >
+                  <td className="py-2 px-4">
+                    <div className="grid grid-cols-12 items-center">
+                      <div 
+                        className="text-3xl font-medium col-span-5"
+                        style={{ color: colors.primary_text_color }}
+                      >
+                        {product.product_name}
+                      </div>
+                      <div 
+                        className="text-lg col-span-7 opacity-80 text-center"
+                        style={{ color: colors.primary_text_color }}
+                      >
+                        {product.strain_cross || '-'}
+                      </div>
+                    </div>
+                  </td>
+
+                  <td className="py-2 px-3 text-left">
+                    <span 
+                      className="text-2xl font-semibold"
+                      style={{ color: colors.primary_text_color }}
+                    >
+                      {product.strain_type || '-'}
+                    </span>
+                  </td>
+                  
+                  <td className="py-2 px-3 text-right">
+                    <div className="flex flex-col items-end">
                       {product.thca_percent && (
                         <span 
                           className="text-xl font-bold"
@@ -316,14 +458,14 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false, concent
                       {!product.thca_percent && (
                         <span style={{ color: colors.secondary_text_color }}>-</span>
                       )}
-                    </>
-                  )}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     )
   }
 
@@ -386,23 +528,20 @@ export default function CombinedMenuGrid({ storeCode, adminMode = false, concent
       style={backgroundStyle}
     >
       {concentrateOnly ? (
-        // Concentrate only page - No header since it's in the page header
-        concentrateProducts.length > 0 && (
-          <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
-            {renderProductTable(concentrateProducts, false)}
-          </div>
-        )
+        // Concentrate only page
+        concentrateProducts.length > 0 && renderConcentrateTable(concentrateProducts)
       ) : (
         <>
-          {/* Vape Section - No header since it's in the page header */}
-          {vapeProducts.length > 0 && (
-            <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
-              {renderProductTable(vapeProducts, true)}
-            </div>
+          {/* Vape Table with Header */}
+          {vapeProducts.length > 0 && renderVapeTable(vapeProducts)}
+          
+          {/* Spacing between tables */}
+          {vapeProducts.length > 0 && concentrateProducts.length > 0 && (
+            <div className="h-8"></div>
           )}
           
-          {/* Concentrate Section - With header */}
-          {renderCategorySection(concentrateProducts, 'Concentrate', false)}
+          {/* Concentrate Table with Header */}
+          {concentrateProducts.length > 0 && renderConcentrateTable(concentrateProducts)}
         </>
       )}
     </div>
