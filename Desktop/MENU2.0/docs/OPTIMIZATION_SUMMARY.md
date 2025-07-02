@@ -91,7 +91,7 @@ The codebase is now:
 
 ## Next Steps for Launch Team
 
-1. Copy `ENV_EXAMPLE.txt` to `.env.local`
+1. Copy `.env.example` to `.env.local`
 2. Run `npm install`
 3. Run `npm run build` to verify production build
 4. Deploy to Vercel or preferred platform

@@ -1,19 +1,29 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Product } from '@/types'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { ErrorMessage } from '@/components/ui/ErrorMessage'
 import { formatCategory } from '@/lib/utils'
-import { getTheme, getSectionConfig, ThemeColors, defaultTheme } from '@/lib/themes'
+import { 
+  getActiveMenuColors, 
+  defaultColors, 
+  getSectionConfig, 
+  MenuColors, 
+  getBackgroundStyle, 
+  getSectionHeaderStyle,
+  getAlternatingRowStyle,
+  getHoverRowStyle,
+  getRowBorderStyle,
+  getTableBorderStyle
+} from '@/lib/menu-colors'
+import { LoadingSpinner } from './ui/LoadingSpinner'
+import { ErrorMessage } from './ui/ErrorMessage'
 
 interface MenuGridProps {
   storeCode: string
   category: string
+  adminMode?: boolean
 }
-
-
 
 // Apple-style smooth text display component
 interface SmoothTextDisplayProps {
@@ -21,12 +31,12 @@ interface SmoothTextDisplayProps {
 }
 
 function SmoothTextDisplay({ text }: SmoothTextDisplayProps) {
-  const [displayText, setDisplayText] = useState('')
+  const [displayText, setDisplayText] = useState(text)
   const [isTransitioning, setIsTransitioning] = useState(false)
 
   useEffect(() => {
     if (text === displayText) return
-
+    
     setIsTransitioning(true)
     
     // Fade out, change text, then fade in
@@ -55,19 +65,13 @@ function SmoothTextDisplay({ text }: SmoothTextDisplayProps) {
   )
 }
 
-export default function MenuGrid({ storeCode, category }: MenuGridProps) {
+export default function MenuGrid({ storeCode, category, adminMode = false }: MenuGridProps) {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [theme, setTheme] = useState<ThemeColors>(defaultTheme)
+  const [colors, setColors] = useState<MenuColors>(defaultColors)
   const [showLineage, setShowLineage] = useState(true)
-  
-  // Auto-refresh controls
-  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true)
-  const [refreshInterval, setRefreshInterval] = useState(() => {
-    return parseInt(process.env.NEXT_PUBLIC_REFRESH_INTERVAL || '60000')
-  })
-  const [customInterval, setCustomInterval] = useState(refreshInterval / 1000) // Convert to seconds for display
+  const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null)
   
   const isFlowerCategory = formatCategory(category) === 'Flower'
   const isVapeCategory = formatCategory(category) === 'Vape'
@@ -93,32 +97,44 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
     }
   }
 
-  const fetchTheme = async () => {
+  const fetchColors = async () => {
     try {
-      const themeData = await getTheme()
-      setTheme(themeData)
+      const colorData = await getActiveMenuColors()
+      setColors(colorData)
     } catch (err) {
-      console.error('Error fetching theme:', err)
-      setTheme(defaultTheme)
+      console.error('Error fetching colors:', err)
+      setColors(defaultColors)
     }
   }
 
   useEffect(() => {
     fetchProducts()
-    fetchTheme()
+    fetchColors()
     
     // Listen for theme updates
     const handleThemeUpdate = () => {
-      fetchTheme()
+      fetchColors()
     }
-    window.addEventListener('themeUpdated', handleThemeUpdate)
     
-    // Auto-refresh with configurable interval
+    // Listen for forced theme refresh
+    const handleForceRefresh = () => {
+      // Clear localStorage and fetch fresh colors
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('activeMenuColors')
+      }
+      fetchColors()
+    }
+    
+    window.addEventListener('themeUpdated', handleThemeUpdate)
+    window.addEventListener('forceThemeRefresh', handleForceRefresh)
+    
+    // Only auto-refresh in admin mode
     let interval: NodeJS.Timeout | null = null
-    if (autoRefreshEnabled) {
+    if (adminMode) {
+      const refreshInterval = parseInt(process.env.NEXT_PUBLIC_REFRESH_INTERVAL || '60000')
       interval = setInterval(() => {
         fetchProducts()
-        fetchTheme()
+        fetchColors()
       }, refreshInterval)
     }
     
@@ -131,8 +147,9 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
       if (interval) clearInterval(interval)
       if (flipInterval) clearInterval(flipInterval)
       window.removeEventListener('themeUpdated', handleThemeUpdate)
+      window.removeEventListener('forceThemeRefresh', handleForceRefresh)
     }
-  }, [storeCode, category, isFlowerOrVape, autoRefreshEnabled, refreshInterval])
+  }, [storeCode, category, isFlowerOrVape, adminMode])
 
   if (loading) {
     return <LoadingSpinner message="Loading menu..." />
@@ -156,73 +173,73 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
     return acc
   }, {} as Record<string, Product[]>)
 
-  // Get dynamic section configuration based on theme
-
   const renderProductTable = (products: Product[]) => {
     // Special handling for edibles - only show Product, Description, and Strength
     if (isEdibleCategory) {
       return (
         <table className="w-full">
           <thead 
-            className="border-b border-gray-700/50"
-            style={{ backgroundColor: theme.table_header_bg }}
+            className="border-b"
+            style={{ 
+              backgroundColor: colors.table_header_bg,
+              borderColor: colors.table_border_color 
+            }}
           >
             <tr>
               <th 
-                className="text-left py-2 px-4 text-lg font-semibold w-2/5"
-                style={{ color: theme.text_color }}
+                className="text-left py-3 px-4 text-lg font-semibold w-2/5"
+                style={{ color: colors.primary_text_color }}
               >
                 Product
               </th>
               <th 
-                className="text-left py-2 px-3 text-lg font-medium w-2/5"
-                style={{ color: theme.text_color }}
+                className="text-left py-3 px-3 text-lg font-medium w-2/5"
+                style={{ color: colors.primary_text_color }}
               >
                 Description
               </th>
               <th 
-                className="text-left py-2 px-3 text-lg font-medium w-1/5"
-                style={{ color: theme.text_color }}
+                className="text-left py-3 px-3 text-lg font-medium w-1/5"
+                style={{ color: colors.primary_text_color }}
               >
                 Strength
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-700/40">
+          <tbody className={getTableBorderStyle(colors)} style={{ borderColor: colors.table_border_color }}>
             {products.map((product, index) => (
               <tr 
                 key={product.id} 
                 className="transition-all duration-200"
                 style={{
-                  backgroundColor: index % 2 === 0 ? 'rgba(31, 41, 55, 0.6)' : 'rgba(17, 24, 39, 0.8)'
+                  ...(hoveredRowIndex === index 
+                    ? getHoverRowStyle(colors)
+                    : getAlternatingRowStyle(index, colors)),
+                  ...getRowBorderStyle(colors)
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = theme.table_row_hover
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = index % 2 === 0 ? 'rgba(31, 41, 55, 0.6)' : 'rgba(17, 24, 39, 0.8)'
-                }}
+                onMouseEnter={() => setHoveredRowIndex(index)}
+                onMouseLeave={() => setHoveredRowIndex(null)}
               >
-                <td className="py-1 px-4">
+                <td className="py-2 px-4">
                   <div 
                     className="text-3xl font-medium"
-                    style={{ color: theme.text_color }}
+                    style={{ color: colors.primary_text_color }}
                   >
                     {product.product_name}
                   </div>
                 </td>
-                <td className="py-1 px-3">
+                <td className="py-2 px-3">
                   <span 
                     className="text-lg"
-                    style={{ color: theme.text_color }}
+                    style={{ color: colors.primary_text_color }}
                   >
                     {product.description || '-'}
                   </span>
                 </td>
-                <td className="py-1 px-3 text-left">
+                <td className="py-2 px-3 text-left">
                   <span 
                     className="text-2xl font-semibold"
-                    style={{ color: theme.text_color }}
+                    style={{ color: colors.primary_text_color }}
                   >
                     {product.strength || '-'}
                   </span>
@@ -234,21 +251,24 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
       )
     }
 
-    // Original table structure for other categories
+    // Original table structure for other categories with enhanced readability
     return (
       <table className="w-full">
         <thead 
-          className="border-b border-gray-700/50"
-          style={{ backgroundColor: theme.table_header_bg }}
+          className="border-b"
+          style={{ 
+            backgroundColor: colors.table_header_bg,
+            borderColor: colors.table_border_color 
+          }}
         >
           <tr>
             <th 
-              className="text-left py-2 px-4 text-lg font-semibold w-3/5"
-              style={{ color: theme.text_color }}
+              className="text-left py-3 px-4 text-lg font-semibold w-3/5"
+              style={{ color: colors.primary_text_color }}
             >
               <div className="grid grid-cols-12 items-center">
                 <div className="col-span-5">Product</div>
-                <div className="col-span-7 text-base font-medium opacity-70 text-center">
+                <div className="col-span-7 text-base font-medium opacity-80 text-center">
                   {isFlowerOrVape ? (showLineage ? 'Lineage' : 'Terpene') : 'Lineage'}
                 </div>
               </div>
@@ -256,46 +276,45 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
 
             {!isFlowerOrVape && (
               <th 
-                className="text-left py-2 px-3 text-lg font-medium w-1/5"
-                style={{ color: theme.text_color }}
+                className="text-left py-3 px-3 text-lg font-medium w-1/5"
+                style={{ color: colors.primary_text_color }}
               >
                 Strength
               </th>
             )}
             <th 
-              className="text-right py-2 px-3 text-lg font-medium w-1/5"
-              style={{ color: theme.text_color }}
+              className="text-right py-3 px-3 text-lg font-medium w-1/5"
+              style={{ color: colors.primary_text_color }}
             >
               THCA %
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-700/40">
+        <tbody className={getTableBorderStyle(colors)} style={{ borderColor: colors.table_border_color }}>
           {products.map((product, index) => (
             <tr 
               key={product.id} 
               className="transition-all duration-200"
               style={{
-                backgroundColor: index % 2 === 0 ? 'rgba(31, 41, 55, 0.6)' : 'rgba(17, 24, 39, 0.8)'
+                ...(hoveredRowIndex === index 
+                  ? getHoverRowStyle(colors)
+                  : getAlternatingRowStyle(index, colors)),
+                ...getRowBorderStyle(colors)
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = theme.table_row_hover
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = index % 2 === 0 ? 'rgba(31, 41, 55, 0.6)' : 'rgba(17, 24, 39, 0.8)'
-              }}
+              onMouseEnter={() => setHoveredRowIndex(index)}
+              onMouseLeave={() => setHoveredRowIndex(null)}
             >
-              <td className="py-1 px-4">
+              <td className="py-2 px-4">
                 <div className="grid grid-cols-12 items-center">
                   <div 
                     className="text-3xl font-medium col-span-5"
-                    style={{ color: theme.text_color }}
+                    style={{ color: colors.primary_text_color }}
                   >
                     {product.product_name}
                   </div>
                   <div 
-                    className="text-lg col-span-7 opacity-70 text-center"
-                    style={{ color: theme.text_color }}
+                    className="text-lg col-span-7 opacity-80 text-center"
+                    style={{ color: colors.primary_text_color }}
                   >
                     {isFlowerOrVape ? (
                       <SmoothTextDisplay 
@@ -308,8 +327,8 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
                 </div>
                 {!isFlowerOrVape && (
                   <div 
-                    className="flex items-center text-lg opacity-70"
-                    style={{ color: theme.text_color }}
+                    className="flex items-center text-lg opacity-80"
+                    style={{ color: colors.primary_text_color }}
                   >
                     {product.terpene && <span>{product.terpene}</span>}
                     {product.description && product.terpene && <span className="mx-1">•</span>}
@@ -319,44 +338,53 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
               </td>
 
               {!isFlowerOrVape && (
-                <td className="py-1 px-3 text-left">
+                <td className="py-2 px-3 text-left">
                   <span 
                     className="text-2xl font-semibold"
-                    style={{ color: theme.text_color }}
+                    style={{ color: colors.primary_text_color }}
                   >
                     {product.strength || '-'}
                   </span>
                 </td>
               )}
-              <td className="py-1 px-3 text-right">
+              <td className="py-2 px-3 text-right">
                 <div className="flex flex-col items-end">
                   {isFlowerOrVape ? (
                     // For flower and vape products: only show THCA, not Delta-9
                     <>
                       {product.thca_percent && (
-                        <span className="text-xl font-bold text-green-300">
+                        <span 
+                          className="text-xl font-bold"
+                          style={{ color: colors.thca_percent_color }}
+                        >
                           {product.thca_percent}%
                         </span>
                       )}
                       {!product.thca_percent && (
-                        <span className="text-gray-500">-</span>
+                        <span style={{ color: colors.secondary_text_color }}>-</span>
                       )}
                     </>
                   ) : (
                     // For other products: show both THCA and Delta-9 as before
                     <>
                       {product.thca_percent && (
-                        <span className="text-xl font-bold text-green-300">
+                        <span 
+                          className="text-xl font-bold"
+                          style={{ color: colors.thca_percent_color }}
+                        >
                           {product.thca_percent}%
                         </span>
                       )}
                       {product.delta9_percent && (
-                        <span className="text-xl font-bold text-blue-300">
+                        <span 
+                          className="text-xl font-bold"
+                          style={{ color: colors.delta9_percent_color }}
+                        >
                           Δ9 {product.delta9_percent}%
                         </span>
                       )}
                       {!product.thca_percent && !product.delta9_percent && (
-                        <span className="text-gray-500">-</span>
+                        <span style={{ color: colors.secondary_text_color }}>-</span>
                       )}
                     </>
                   )}
@@ -369,123 +397,18 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
     )
   }
 
-  // Handle interval change
-  const handleIntervalChange = (seconds: number) => {
-    setCustomInterval(seconds)
-    setRefreshInterval(seconds * 1000) // Convert to milliseconds
-  }
-
-  // Manual refresh function
-  const handleManualRefresh = () => {
-    fetchProducts()
-    fetchTheme()
-  }
+  // Build background style
+  const backgroundStyle = colors.main_background_type === 'gradient' && colors.main_background_gradient
+    ? getBackgroundStyle(colors.main_background_gradient)
+    : getBackgroundStyle(colors.main_background_color)
 
   return (
     <div 
       className="w-full space-y-0 min-h-screen hide-scrollbar"
-      style={{ backgroundColor: theme.background_color }}
+      style={backgroundStyle}
     >
-      {/* Auto-refresh controls */}
-      <div 
-        className="px-6 py-3 border-b border-gray-700/50 bg-gray-900/80 backdrop-blur-sm"
-        style={{ backgroundColor: theme.table_header_bg }}
-      >
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center space-x-6">
-            {/* Auto-refresh toggle */}
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => setAutoRefreshEnabled(!autoRefreshEnabled)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  autoRefreshEnabled ? 'bg-green-600' : 'bg-gray-600'
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    autoRefreshEnabled ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-              <span className="text-sm font-medium" style={{ color: theme.text_color }}>
-                Auto-refresh {autoRefreshEnabled ? 'On' : 'Off'}
-              </span>
-            </div>
-
-            {/* Interval selector */}
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium" style={{ color: theme.text_color }}>
-                Interval:
-              </span>
-              <select
-                value={customInterval}
-                onChange={(e) => handleIntervalChange(Number(e.target.value))}
-                disabled={!autoRefreshEnabled}
-                className="bg-gray-700 text-white text-sm px-2 py-1 rounded border border-gray-600 disabled:opacity-50"
-              >
-                <option value={10}>10 seconds</option>
-                <option value={30}>30 seconds</option>
-                <option value={60}>1 minute</option>
-                <option value={120}>2 minutes</option>
-                <option value={300}>5 minutes</option>
-                <option value={600}>10 minutes</option>
-              </select>
-            </div>
-
-            {/* Custom interval input */}
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium" style={{ color: theme.text_color }}>
-                Custom:
-              </span>
-              <input
-                type="number"
-                min="5"
-                max="3600"
-                value={customInterval}
-                onChange={(e) => handleIntervalChange(Number(e.target.value))}
-                disabled={!autoRefreshEnabled}
-                className="bg-gray-700 text-white text-sm px-2 py-1 rounded border border-gray-600 w-16 disabled:opacity-50"
-              />
-              <span className="text-sm" style={{ color: theme.text_color }}>
-                sec
-              </span>
-            </div>
-          </div>
-
-          {/* Manual refresh button */}
-          <button
-            onClick={handleManualRefresh}
-            disabled={loading}
-            className="flex items-center space-x-2 px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <svg 
-              className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            <span>Refresh</span>
-          </button>
-        </div>
-
-        {/* Status indicator */}
-        <div className="mt-2 text-xs" style={{ color: theme.text_color }}>
-          {autoRefreshEnabled ? (
-            <span className="text-green-400">
-              Auto-refreshing every {customInterval} seconds
-            </span>
-          ) : (
-            <span className="text-gray-400">
-              Auto-refresh disabled - Use manual refresh button
-            </span>
-          )}
-        </div>
-      </div>
-
       {Object.entries(groupedProducts).map(([strainType, products]) => {
-        const config = getSectionConfig(strainType, theme)
+        const config = getSectionConfig(strainType, colors)
         
         // Get appropriate terminology for product count based on category
         const getProductTerminology = () => {
@@ -500,26 +423,36 @@ export default function MenuGrid({ storeCode, category }: MenuGridProps) {
         
         return (
           <div key={strainType} className="w-full">
-            {/* Section Header */}
+            {/* Section Header with enhanced Apple styling */}
             <div 
-              className="px-6 py-4"
-              style={{ 
-                background: config.color.includes('gradient') ? config.color : config.color,
-                backgroundColor: !config.color.includes('gradient') ? config.color : undefined
+              className={`px-6 py-5 border-b ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}
+              style={{
+                ...getSectionHeaderStyle(config.color, colors.header_blur_effect),
+                borderColor: colors.table_border_color + '50'
               }}
             >
               <div className="flex items-center justify-between">
-                <h2 className={`text-2xl font-bold ${config.textColor} tracking-wider font-sf-pro-display drop-shadow-lg`}>
+                <h2 
+                  className="text-3xl font-bold tracking-wider font-sf-pro-display drop-shadow-2xl"
+                  style={{ color: config.textColor }}
+                >
                   {strainType.toUpperCase()}
                 </h2>
-                <div className="text-white/90 text-sm font-medium drop-shadow-md">
+                <div 
+                  className="text-sm font-medium drop-shadow-lg px-3 py-1 rounded-full"
+                  style={{ 
+                    backgroundColor: colors.product_count_bg + '20',
+                    color: colors.product_count_text,
+                    backdropFilter: colors.header_blur_effect ? 'blur(8px)' : 'none'
+                  }}
+                >
                   {products.length} {getProductTerminology()}
                 </div>
               </div>
             </div>
             
-            {/* Products Table */}
-            <div className="w-full overflow-hidden bg-gray-800/90 backdrop-blur-sm">
+            {/* Products Table with enhanced readability */}
+            <div className={`w-full overflow-hidden bg-black/95 ${colors.header_blur_effect ? 'backdrop-blur-sm' : ''}`}>
               {renderProductTable(products)}
             </div>
           </div>
