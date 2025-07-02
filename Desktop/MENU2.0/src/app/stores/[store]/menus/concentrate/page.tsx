@@ -9,7 +9,7 @@ interface PageProps {
   }
 }
 
-export default async function VapeConcentratePage({ params }: PageProps) {
+export default async function ConcentratePage({ params }: PageProps) {
   const storeCode = params.store.toUpperCase()
   const stores = await getStores()
   const store = stores.find(s => s.code.toLowerCase() === params.store.toLowerCase())
@@ -22,10 +22,10 @@ export default async function VapeConcentratePage({ params }: PageProps) {
     <main className="min-h-screen">
       <MenuHeader 
         storeCode={storeCode} 
-        category="vape"
+        category="concentrate"
         storeName={store.name}
       />
-      <CombinedMenuGrid storeCode={storeCode} />
+      <CombinedMenuGrid storeCode={storeCode} concentrateOnly={true} />
     </main>
   )
-} 
+}

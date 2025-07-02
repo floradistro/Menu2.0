@@ -44,7 +44,7 @@ export default async function Home() {
           </div>
           
           <h1 className="text-6xl font-light tracking-wider text-gray-100 mb-4 font-sf-pro-display">
-            CHOOSE YOUR FATE
+            WELCOME
           </h1>
           <div className="w-24 h-px bg-gradient-to-r from-transparent via-gray-500 to-transparent mx-auto mb-8"></div>
           <p className="text-xl text-gray-300 font-light tracking-wide font-sf-pro-display">
