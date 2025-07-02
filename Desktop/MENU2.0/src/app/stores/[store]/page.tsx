@@ -19,11 +19,12 @@ export default async function StorePage({ params }: PageProps) {
     notFound()
   }
 
-  const categories = ['Flower', 'Vape', 'Edible', 'Concentrate', 'Moonwater'].map(name => ({
-    name,
-    icon: CATEGORY_ICONS[name],
-    color: CATEGORY_GRADIENTS[name]
-  }))
+  const categories = [
+    { name: 'Flower', icon: CATEGORY_ICONS['Flower'], color: CATEGORY_GRADIENTS['Flower'] },
+    { name: 'Vape & Concentrate', icon: '💨💎', color: 'from-blue-600 via-orange-500 to-yellow-500' },
+    { name: 'Edible', icon: CATEGORY_ICONS['Edible'], color: CATEGORY_GRADIENTS['Edible'] },
+    { name: 'Moonwater', icon: CATEGORY_ICONS['Moonwater'], color: CATEGORY_GRADIENTS['Moonwater'] }
+  ]
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
@@ -77,7 +78,10 @@ export default async function StorePage({ params }: PageProps) {
             {categories.map((category) => (
               <Link
                 key={category.name}
-                href={`/stores/${params.store}/menus/${category.name.toLowerCase()}`}
+                href={category.name === 'Vape & Concentrate' 
+                  ? `/stores/${params.store}/menus/vape-concentrate`
+                  : `/stores/${params.store}/menus/${category.name.toLowerCase()}`
+                }
                 className="group bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6 hover:border-gray-600 hover:bg-gray-700/50 transition-all duration-300 text-center transform hover:scale-105"
               >
                 <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
